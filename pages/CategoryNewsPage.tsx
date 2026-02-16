@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { CATEGORIES, MOCK_ARTICLES } from '../constants';
 import { ArticleCard } from '../components/ArticleCard';
 import { Grid, List, ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { SEO } from '../components/SEO';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -18,9 +19,6 @@ export const CategoryNewsPage: React.FC = () => {
   const articles = useMemo(() => {
     if (!category) return [];
     const filtered = MOCK_ARTICLES.filter(a => a.categoryId === categoryId);
-    // If no articles match exactly (demo data), return all or empty. 
-    // For this demo, let's show all if empty so the page isn't blank, but strictly filtering is better.
-    // Let's filter strictly.
     return filtered.length > 0 ? filtered : []; 
   }, [categoryId, category]);
 
@@ -41,6 +39,7 @@ export const CategoryNewsPage: React.FC = () => {
   if (!category) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center p-10 text-center">
+        <SEO title="Kategorija nije pronađena | Geovizija" />
         <h2 className="text-3xl font-serif font-bold text-stone-900 mb-4">Kategorija nije pronađena</h2>
         <Link to="/" className="text-geo-green font-bold hover:underline flex items-center gap-2">
            <Home size={18} /> Povratak na naslovnu
@@ -51,6 +50,12 @@ export const CategoryNewsPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in min-h-screen bg-stone-100 pb-20">
+      <SEO 
+        title={`${category.name} | Geovizija`}
+        description={`Najnovije vijesti, analize i reportaže iz svijeta ${category.name.toLowerCase()}.`}
+        image={category.imageUrl}
+      />
+
       {/* Category Hero Header */}
       <div className={`w-full py-20 md:py-32 relative text-white shadow-xl overflow-hidden`}>
          {/* Background Image */}

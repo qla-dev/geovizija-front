@@ -4,6 +4,7 @@ import { MOCK_ARTICLES, CATEGORIES } from '../constants';
 import { CategoryPill } from '../components/CategoryPill';
 import { Clock, Share2, ArrowLeft, Bot, Sparkles, ArrowRightLeft, MessageSquare, ThumbsUp, MousePointerClick } from 'lucide-react';
 import { getArticleSummary } from '../services/geminiService';
+import { SEO } from '../components/SEO';
 
 export const ArticlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,6 +35,7 @@ export const ArticlePage: React.FC = () => {
   if (!article) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center">
+        <SEO title="Članak nije pronađen | Geovizija" description="Traženi članak ne postoji na našem portalu." />
         <h2 className="text-2xl font-serif mb-4">Članak nije pronađen.</h2>
         <button onClick={() => navigate('/')} className="text-geo-green font-bold hover:underline">Natrag na naslovnu</button>
       </div>
@@ -68,6 +70,13 @@ export const ArticlePage: React.FC = () => {
 
   return (
     <article className="animate-fade-in bg-white min-h-screen pb-20">
+      <SEO 
+        title={`${article.title} | Geovizija`}
+        description={article.excerpt}
+        image={article.imageUrl}
+        type="article"
+      />
+
       {/* Article Hero */}
       <div className="h-[60vh] relative w-full overflow-hidden">
         <img 

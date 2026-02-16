@@ -2,10 +2,13 @@ import React from 'react';
 import { CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { SEO } from '../components/SEO';
 
 export const CategoryPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
+      <SEO title="Kategorije | Geovizija" description="Istražite sve kategorije na Geovizija portalu. Ekologija, Priroda, Tehnologija, Putovanja i više." />
+      
       <h1 className="text-4xl md:text-5xl font-serif font-black text-stone-900 mb-12 text-center md:text-left">
         Kategorije
       </h1>

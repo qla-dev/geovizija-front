@@ -4,6 +4,7 @@ import { ArticleCard } from '../components/ArticleCard';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Camera, Zap, Globe, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CategoryPill } from '../components/CategoryPill';
+import { SEO } from '../components/SEO';
 
 export const HomePage: React.FC = () => {
   // --- HERO SLIDER STATE ---
@@ -97,6 +98,10 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="animate-fade-in bg-stone-100">
+      <SEO 
+        title="Geovizija | Ekološki Portal" 
+        description="Vaš prozor u svijet prirode. Najnovije vijesti o ekologiji, putovanjima i tehnologiji."
+      />
       
       {/* --- SECTION 1: HERO (Slider + Sidebar) --- */}
       <section className="grid grid-cols-1 lg:grid-cols-3 lg:h-[650px]">
