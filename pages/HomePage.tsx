@@ -198,7 +198,7 @@ export const HomePage: React.FC = () => {
             <div className="w-[calc(100%_+_50vw_-_50%)] -mr-[calc(50vw_-_50%)]">
                 <div 
                     ref={sliderRef}
-                    className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth pr-[calc(50vw_-_50%)]"
+                    className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar scroll-smooth pr-[calc(50vw_-_50%)]"
                 >
                     {moreArticles.map((article) => {
                         const category = CATEGORIES.find(c => c.id === article.categoryId);
@@ -278,8 +278,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- SECTION 3: TECHNOLOGY SPOTLIGHT (White BG) --- */}
-      {/* Updated Padding: Less at bottom to be closer to TV section */}
-      <section className="pt-16 pb-10 md:pt-24 md:pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10 pb-4 border-b border-stone-300">
              <div>
                <span className="text-geo-green font-bold uppercase tracking-widest text-xs mb-2 block">Inovacije</span>
@@ -320,8 +319,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- SECTION 4: MULTIMEDIA / DARK MODE --- */}
-      {/* Updated Padding: Slightly less top padding to connect better with section above */}
-      <section className="bg-stone-950 text-white pt-12 pb-16 md:pt-16 md:pb-24 border-t border-stone-900">
+      <section className="bg-stone-950 text-white py-16 md:py-24 border-t border-stone-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-3xl md:text-4xl font-serif font-bold flex items-center gap-3">
