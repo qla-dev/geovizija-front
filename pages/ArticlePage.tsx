@@ -156,8 +156,11 @@ export const ArticlePage: React.FC = () => {
 
             {/* Main Content */}
             <div className="prose prose-lg prose-stone max-w-none font-serif text-stone-700">
-              {article.content.split('\n').map((paragraph, index) => (
-                 <p key={index} className="mb-6 leading-loose">{paragraph}</p>
+              {/* Blocks are separated by blank lines; "## " starts a subheading */}
+              {article.content.split(/\n\s*\n/).map(block => block.trim()).filter(Boolean).map((block, index) => (
+                 block.startsWith('## ')
+                   ? <h2 key={index} className="text-2xl md:text-3xl font-bold text-stone-900 mt-10 mb-4">{block.slice(3)}</h2>
+                   : <p key={index} className="mb-6 leading-loose">{block}</p>
               ))}
             </div>
 
