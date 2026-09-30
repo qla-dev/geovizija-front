@@ -7,6 +7,7 @@ import { Article, Category } from '../types';
 
 // 1 članak, 2-4 članka, 5+ članaka (11-14 always "članaka")
 const articlesLabel = (count: number) => {
+  if (count === 0) return 'Uskoro';
   const lastTwo = count % 100, last = count % 10;
   if (last === 1 && lastTwo !== 11) return `${count} članak`;
   if (last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14)) return `${count} članka`;
@@ -89,20 +90,23 @@ export const CategoryPage: React.FC = () => {
       <div className="hidden md:block max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="grid grid-cols-3 gap-6">
           {featured && <CategoryTile entry={featured} large />}
-          {rest.map(entry => <CategoryTile key={entry.category.id} entry={entry} />)}
+          {rest.map((entry, i) => (
+            // Two tiles sit beside the featured one; widen the last tile when the final row would leave a gap.
+            <CategoryTile key={entry.category.id} entry={entry} wide={i === rest.length - 1 && (rest.length - 2) % 3 === 2} />
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-const CategoryTile: React.FC<{ entry: CategoryEntry; large?: boolean }> = ({ entry, large }) => {
+const CategoryTile: React.FC<{ entry: CategoryEntry; large?: boolean; wide?: boolean }> = ({ entry, large, wide }) => {
   const { category, posts, latest, image, number } = entry;
 
   return (
     <Link
       to={`/category/${category.id}`}
-      className={`group relative block overflow-hidden bg-stone-900 ${large ? 'col-span-2 row-span-2 min-h-[560px]' : 'min-h-[268px]'}`}
+      className={`group relative block overflow-hidden bg-stone-900 ${large ? 'col-span-2 row-span-2 min-h-[560px]' : wide ? 'col-span-2 min-h-[268px]' : 'min-h-[268px]'}`}
     >
       <img
         src={image}
