@@ -5,7 +5,9 @@ import { ArticleCard } from '../components/ArticleCard';
 import { Grid, List, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
-const ITEMS_PER_PAGE = 5;
+// 6 fills whole rows in both the 2-column (mobile) and 3-column (desktop) grid
+const ITEMS_PER_PAGE = 6;
+const VIEW_STORAGE_KEY = 'geovizija_category_view';
 
 // 1 članak, 2-4 članka, 5+ članaka (11-14 always "članaka")
 const articlesWord = (count: number) => {
@@ -18,7 +20,14 @@ const articlesWord = (count: number) => {
 export const CategoryNewsPage: React.FC = () => {
   const { articles: allArticles, categories: allCategories } = useContent();
   const { categoryId } = useParams();
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [viewMode, setViewModeState] = useState<'grid' | 'list'>(() => {
+    try { return localStorage.getItem(VIEW_STORAGE_KEY) === 'grid' ? 'grid' : 'list'; } catch { return 'list'; }
+  });
+  const setViewMode = (mode: 'grid' | 'list') => {
+    setViewModeState(mode);
+    setCurrentPage(1);
+    try { localStorage.setItem(VIEW_STORAGE_KEY, mode); } catch { /* storage unavailable */ }
+  };
   const [currentPage, setCurrentPage] = useState(1);
 
   // Find Category Info
@@ -131,16 +140,23 @@ export const CategoryNewsPage: React.FC = () => {
                  </Link>
              </div>
          ) : (
-             <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                {currentArticles.map((article) => (
-                   <div key={article.id} className={viewMode === 'grid' ? 'md:h-[480px]' : 'h-auto md:h-64'}>
-                      <ArticleCard 
-                        article={article} 
-                        variant={viewMode === 'grid' ? 'standard' : 'horizontal'} 
-                      />
-                   </div>
-                ))}
-             </div>
+             viewMode === 'grid' ? (
+               // Grid: compact photo tiles, 2 per row on mobile
+               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                  {currentArticles.map((article) => (
+                     <ArticleCard key={article.id} article={article} variant="tile" />
+                  ))}
+               </div>
+             ) : (
+               // List: one large card per row
+               <div className="grid grid-cols-1 gap-6">
+                  {currentArticles.map((article) => (
+                     <div key={article.id} className="h-auto md:h-64">
+                        <ArticleCard article={article} variant="horizontal" />
+                     </div>
+                  ))}
+               </div>
+             )
          )}
 
          {/* Pagination */}

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 interface ArticleCardProps {
   article: Article;
-  variant?: 'standard' | 'compact' | 'featured' | 'horizontal';
+  variant?: 'standard' | 'compact' | 'featured' | 'horizontal' | 'tile';
 }
 
 export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'standard' }) => {
@@ -69,6 +69,32 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
                <Clock size={14} className="mr-1" />
                <span>{article.readTime} min</span>
             </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  // Small photo tile for dense grids (two per row on mobile)
+  if (variant === 'tile') {
+    return (
+      <Link to={`/article/${article.id}`} className="group flex flex-col h-full bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+        <div className="aspect-[4/3] relative overflow-hidden bg-stone-200">
+          <img
+            src={article.imageUrl}
+            alt={article.title}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+        <div className="flex-1 flex flex-col p-3 md:p-5">
+          <h3 className="font-serif text-[15px] md:text-xl font-bold text-stone-900 leading-snug line-clamp-3 group-hover:text-geo-green transition-colors">
+            {article.title}
+          </h3>
+          <p className="hidden md:block text-stone-600 text-sm line-clamp-2 mt-2 leading-relaxed">{article.excerpt}</p>
+          <div className="mt-auto pt-3 flex items-center text-[11px] md:text-xs text-stone-400">
+            <Clock size={12} className="mr-1" />
+            <span>{article.readTime} min</span>
           </div>
         </div>
       </Link>
