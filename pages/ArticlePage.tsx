@@ -127,12 +127,12 @@ export const ArticlePage: React.FC = () => {
           {/* LEFT COLUMN: ARTICLE CONTENT */}
           <div className="lg:col-span-8">
             {/* Excerpt */}
-            <p className="text-xl md:text-2xl font-serif font-medium text-stone-800 leading-relaxed mb-8 border-l-4 border-geo-green pl-6">
+            <p className="text-xl md:text-2xl font-serif font-medium text-stone-800 leading-relaxed mb-6 md:mb-8 border-l-4 border-geo-green pl-6">
               {article.excerpt}
             </p>
 
             {/* TABS / REPORT COMPONENT */}
-            <div className="mb-10 pb-4 border-b border-stone-100">
+            <div className="mb-5 md:mb-10 pb-4 border-b border-stone-100">
                <div className="flex flex-wrap gap-2">
                   <span className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-lg cursor-pointer transition-colors">
                      {categoryName}
@@ -140,9 +140,7 @@ export const ArticlePage: React.FC = () => {
                   <span className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-lg cursor-pointer transition-colors">
                      {article.author}
                   </span>
-                  <span className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-lg cursor-pointer transition-colors">
-                     2026
-                  </span>
+                  <span className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-lg cursor-pointer transition-colors">{article.date.split(" ").pop()}</span>
                    <span className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-lg cursor-pointer transition-colors">
                      Ekskluzivno
                   </span>
