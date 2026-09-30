@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
-import { Clock, Share2, ArrowLeft, Bot, Sparkles, ArrowRightLeft, MessageSquare, ThumbsUp, MousePointerClick } from 'lucide-react';
-import { getArticleSummary } from '../services/geminiService';
+import { Clock, ArrowLeft, ArrowRightLeft, MessageSquare, ThumbsUp, MousePointerClick } from 'lucide-react';
+import { ShareBar } from '../components/ShareBar';
 import { SEO } from '../components/SEO';
 
 export const ArticlePage: React.FC = () => {
@@ -12,8 +12,6 @@ export const ArticlePage: React.FC = () => {
   const navigate = useNavigate();
   const article = allArticles.find(a => a.id === id);
   
-  const [summary, setSummary] = useState<string | null>(null);
-  const [loadingSummary, setLoadingSummary] = useState(false);
 
   // Mock Comment State
   const [comments, setComments] = useState([
@@ -42,17 +40,6 @@ export const ArticlePage: React.FC = () => {
       </div>
     );
   }
-
-  const handleGenerateSummary = async () => {
-    if (summary) return; // Already generated
-    setLoadingSummary(true);
-    try {
-      const result = await getArticleSummary(article.content);
-      setSummary(result);
-    } finally {
-      setLoadingSummary(false);
-    }
-  };
 
   const handlePostComment = () => {
       if(!commentInput.trim()) return;
@@ -168,59 +155,7 @@ export const ArticlePage: React.FC = () => {
               ))}
             </div>
 
-            {/* AI Insight Box - MOVED TO BOTTOM */}
-            <div className="my-10 bg-stone-50 border border-stone-200 p-6 rounded-none relative overflow-hidden group">
-                {/* Theme color gradient */}
-                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-geo-green to-emerald-700"></div>
-                <div className="flex items-start gap-4">
-                   <div className="bg-white p-3 rounded-full shadow-sm text-geo-green">
-                      <Sparkles size={24} />
-                   </div>
-                   <div className="flex-1">
-                      <h3 className="font-bold text-lg text-stone-900 mb-2 flex items-center gap-2">
-                        Geovizija AI Sažetak
-                        {!summary && !loadingSummary && (
-                           <button 
-                             onClick={handleGenerateSummary}
-                             className="text-xs font-normal text-stone-900 bg-geo-green hover:bg-emerald-400 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
-                           >
-                             Generiraj <Bot size={12} />
-                           </button>
-                        )}
-                      </h3>
-                      
-                      {loadingSummary && (
-                        <div className="flex space-x-2 animate-pulse py-2">
-                          <div className="h-2 w-2 bg-geo-green rounded-full"></div>
-                          <div className="h-2 w-2 bg-geo-green rounded-full"></div>
-                          <div className="h-2 w-2 bg-geo-green rounded-full"></div>
-                          <span className="text-sm text-stone-400">Analiziram tekst...</span>
-                        </div>
-                      )}
-
-                      {summary && (
-                        <div className="prose prose-sm text-stone-600 animate-fade-in">
-                           <p>{summary}</p>
-                           <p className="text-xs text-stone-400 mt-2 italic">Generirano pomoću Gemini AI tehnologije. Provjerite informacije.</p>
-                        </div>
-                      )}
-
-                      {!summary && !loadingSummary && (
-                        <p className="text-sm text-stone-500">
-                          Kliknite gumb iznad za brzi AI sažetak ključnih točaka članka.
-                        </p>
-                      )}
-                   </div>
-                </div>
-            </div>
-
-            {/* Share Only (Tags Removed) */}
-            <div className="mt-8 pt-8 border-t border-stone-200 flex justify-end items-center">
-               <button className="flex items-center gap-2 text-stone-500 hover:text-geo-green transition-colors bg-stone-50 hover:bg-stone-100 px-4 py-2 rounded-full">
-                  <Share2 size={20} />
-                  <span className="font-bold text-sm uppercase tracking-wider">Podijeli članak</span>
-               </button>
-            </div>
+            <ShareBar title={article.title} />
 
             {/* COMMENTING MECHANISM */}
             <div className="mt-16">
