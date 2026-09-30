@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { MOCK_ARTICLES, CATEGORIES } from '../constants';
+import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
 import { Clock, Share2, ArrowLeft, Bot, Sparkles, ArrowRightLeft, MessageSquare, ThumbsUp, MousePointerClick } from 'lucide-react';
 import { getArticleSummary } from '../services/geminiService';
 import { SEO } from '../components/SEO';
 
 export const ArticlePage: React.FC = () => {
+  const { articles: allArticles, categories: allCategories } = useContent();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const article = MOCK_ARTICLES.find(a => a.id === id);
+  const article = allArticles.find(a => a.id === id);
   
   const [summary, setSummary] = useState<string | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
@@ -22,12 +23,12 @@ export const ArticlePage: React.FC = () => {
   const [commentInput, setCommentInput] = useState('');
 
   // Filter related articles for the sidebar
-  const relatedArticles = MOCK_ARTICLES
+  const relatedArticles = allArticles
     .filter(a => a.id !== id) // Exclude current
     .slice(0, 4); // Take 4
 
   // Filter suggested articles for bottom grid (Random 6 for demo)
-  const suggestedArticles = MOCK_ARTICLES
+  const suggestedArticles = allArticles
     .filter(a => a.id !== id)
     .sort(() => 0.5 - Math.random()) // Simple shuffle
     .slice(0, 6);
@@ -66,7 +67,7 @@ export const ArticlePage: React.FC = () => {
       setCommentInput('');
   };
 
-  const categoryName = CATEGORIES.find(c => c.id === article.categoryId)?.name || 'Vijesti';
+  const categoryName = allCategories.find(c => c.id === article.categoryId)?.name || 'Vijesti';
 
   return (
     <article className="animate-fade-in bg-white min-h-screen pb-20">
@@ -333,7 +334,7 @@ export const ArticlePage: React.FC = () => {
                          </div>
                          <div className="flex-1 min-w-0">
                             <span className="text-[10px] text-red-600 font-bold uppercase tracking-wider block mb-1 truncate">
-                               {CATEGORIES.find(c => c.id === rel.categoryId)?.name || 'Povezano'}
+                               {allCategories.find(c => c.id === rel.categoryId)?.name || 'Povezano'}
                             </span>
                             <h4 className="font-serif font-bold text-stone-800 text-sm leading-snug group-hover:text-geo-green transition-colors line-clamp-3">
                                {rel.title}

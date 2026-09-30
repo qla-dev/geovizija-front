@@ -1,10 +1,11 @@
 import React from 'react';
-import { CATEGORIES } from '../constants';
+import { useContent } from '../components/ContentProvider';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
 export const CategoryPage: React.FC = () => {
+  const { categories: allCategories } = useContent();
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
       <SEO title="Kategorije | Geovizija" description="Istražite sve kategorije na Geovizija portalu. Ekologija, Priroda, Tehnologija, Putovanja i više." />
@@ -14,7 +15,7 @@ export const CategoryPage: React.FC = () => {
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {CATEGORIES.map((category) => (
+        {allCategories.map((category) => (
           <Link 
             key={category.id} 
             to={`/category/${category.id}`}

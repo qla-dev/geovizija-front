@@ -25,3 +25,8 @@ dist-ssr
 
 # Laravel backend is deployed inside the web root as ./endpoints (separate repo)
 /endpoints/
+
+# Environment files (keep the documented example)
+.env
+.env.*
+!.env.example

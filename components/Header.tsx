@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { CATEGORIES } from '../constants';
+import { useContent } from './ContentProvider';
 import { Menu, Search, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind } from 'lucide-react';
 
 // Mock Weather Data for 20 Main Cities (Ex-Yu Region)
@@ -41,6 +41,7 @@ const WeatherIcon = ({ condition, className }: { condition: string, className?: 
 };
 
 export const Header: React.FC = () => {
+  const { categories: allCategories } = useContent();
   const location = useLocation();
   const [weatherIndex, setWeatherIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -88,7 +89,7 @@ export const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-6 lg:space-x-8 items-center justify-center flex-1 px-8">
-            {CATEGORIES.slice(0, 6).map((cat) => {
+            {allCategories.slice(0, 6).map((cat) => {
               const isActive = location.pathname === `/category/${cat.id}`;
               return (
                 <Link 

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Layout } from './components/Layout';
+import { ContentProvider } from './components/ContentProvider';
 import { HomePage } from './pages/HomePage';
 import { CategoryPage } from './pages/CategoryPage';
 import { ArticlePage } from './pages/ArticlePage';
@@ -21,6 +22,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
+      <ContentProvider>
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -30,6 +32,7 @@ const App: React.FC = () => {
           <Route path="*" element={<div className="p-10 text-center">404 - Stranica nije pronađena</div>} />
         </Routes>
       </Layout>
+      </ContentProvider>
     </Router>
   );
 };

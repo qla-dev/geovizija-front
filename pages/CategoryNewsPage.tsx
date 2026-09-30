@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { CATEGORIES, MOCK_ARTICLES } from '../constants';
+import { useContent } from '../components/ContentProvider';
 import { ArticleCard } from '../components/ArticleCard';
 import { Grid, List, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { SEO } from '../components/SEO';
@@ -8,19 +8,20 @@ import { SEO } from '../components/SEO';
 const ITEMS_PER_PAGE = 5;
 
 export const CategoryNewsPage: React.FC = () => {
+  const { articles: allArticles, categories: allCategories } = useContent();
   const { categoryId } = useParams();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [currentPage, setCurrentPage] = useState(1);
 
   // Find Category Info
-  const category = CATEGORIES.find(c => c.id === categoryId);
+  const category = allCategories.find(c => c.id === categoryId);
   
   // Filter Articles
   const articles = useMemo(() => {
     if (!category) return [];
-    const filtered = MOCK_ARTICLES.filter(a => a.categoryId === categoryId);
+    const filtered = allArticles.filter(a => a.categoryId === categoryId);
     return filtered.length > 0 ? filtered : []; 
-  }, [categoryId, category]);
+  }, [categoryId, category, allArticles]);
 
   // Pagination Logic
   const totalPages = Math.ceil(articles.length / ITEMS_PER_PAGE);

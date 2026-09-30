@@ -1,6 +1,6 @@
 import React from 'react';
 import { CategoryId } from '../types';
-import { CATEGORIES } from '../constants';
+import { useContent } from './ContentProvider';
 
 interface CategoryPillProps {
   id: CategoryId;
@@ -8,7 +8,8 @@ interface CategoryPillProps {
 }
 
 export const CategoryPill: React.FC<CategoryPillProps> = ({ id, className = '' }) => {
-  const category = CATEGORIES.find(c => c.id === id);
+  const { categories: allCategories } = useContent();
+  const category = allCategories.find(c => c.id === id);
   if (!category) return null;
 
   return (

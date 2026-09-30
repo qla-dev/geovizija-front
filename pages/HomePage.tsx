@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { MOCK_ARTICLES, CATEGORIES } from '../constants';
+import { useContent } from '../components/ContentProvider';
 import { ArticleCard } from '../components/ArticleCard';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Camera, Zap, Globe, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -7,58 +7,44 @@ import { CategoryPill } from '../components/CategoryPill';
 import { SEO } from '../components/SEO';
 
 export const HomePage: React.FC = () => {
+  const { articles: allArticles, categories: allCategories } = useContent();
   // --- HERO SLIDER STATE ---
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   
-  // Select articles for the hero slider (Nature, Tech, Travel, Nature)
+  // Articles arrive newest first; wrap around so short lists still fill every section.
+  const pick = (index: number) => allArticles[index % Math.max(allArticles.length, 1)];
+
+  // Hero slider: featured posts first, topped up with the newest ones (max 4)
   const heroArticles = [
-    MOCK_ARTICLES[0],  // Perućica (Nature)
-    MOCK_ARTICLES[10], // Architecture (Tech)
-    MOCK_ARTICLES[11], // Destinations (Travel)
-    MOCK_ARTICLES[6]   // Lynx (Nature)
-  ];
+    ...allArticles.filter(a => a.featured),
+    ...allArticles.filter(a => !a.featured),
+  ].slice(0, 4);
 
   // Auto-slide logic
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentHeroIndex((prev) => (prev + 1) % heroArticles.length);
+      setCurrentHeroIndex((prev) => (prev + 1) % Math.max(heroArticles.length, 1));
     }, 6000); // 6 seconds per slide
     return () => clearInterval(timer);
   }, [currentHeroIndex, heroArticles.length]); // Reset timer on interaction
 
-  // Data Slicing
-  const featuredArticle = MOCK_ARTICLES[0]; // Kept for reference if needed, but heroArticles is used
-  // Increased sidebar count to 4 (Indices 1, 2, 3, 4)
-  const sidebarArticles = MOCK_ARTICLES.slice(1, 5);
-  const techArticles = MOCK_ARTICLES.filter(a => a.categoryId === 'tehnologija');
-  const natureArticles = MOCK_ARTICLES.filter(a => a.categoryId === 'priroda');
-  const travelArticles = MOCK_ARTICLES.filter(a => a.categoryId === 'putovanja');
+  // Data Slicing: sidebar shows the newest posts that are not in the hero
+  const sidebarArticles = allArticles.filter(a => !heroArticles.includes(a)).slice(0, 4);
+  const techArticles = allArticles.filter(a => a.categoryId === 'tehnologija');
+  const natureArticles = allArticles.filter(a => a.categoryId === 'priroda');
+  const travelArticles = allArticles.filter(a => a.categoryId === 'putovanja');
 
-  // Prepare Travel Sidebar Items (3 existing + 1 dummy to make 4)
+  // Travel sidebar: remaining travel posts, topped up with other posts to make 4
   const travelSidebarItems = [
-      ...travelArticles.slice(1, 4),
-      {
-          id: 'dummy-travel-extra',
-          title: 'Zeleni otoci: Održivi turizam na Maldivima',
-          imageUrl: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&q=80',
-      }
-  ];
-  
-  // Mix articles for TV section (Indices 5, 6, 7 + one extra dummy for 4 items)
-  const mixArticles = [
-    MOCK_ARTICLES[5],
-    MOCK_ARTICLES[6],
-    MOCK_ARTICLES[7],
-    {
-       ...MOCK_ARTICLES[4],
-       id: 'dummy-video-4',
-       title: 'Podvodni svijet Jadrana: Skrivene špilje',
-       imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80'
-    }
-  ];
-  
+      ...travelArticles.slice(1),
+      ...allArticles.filter(a => a.categoryId !== 'putovanja'),
+  ].slice(0, 4);
+
+  // Mix articles for TV section (4 items)
+  const mixArticles = [pick(4), pick(5), pick(6), pick(7)].filter(Boolean);
+
   // Prepare Tech Section Data (1 Big, 4 Small)
-  const bigTechArticle = techArticles[0];
+  const bigTechArticle = techArticles[0] ?? pick(0);
   const smallTechArticles = [
       ...techArticles.slice(1),
       ...mixArticles.filter(a => !techArticles.some(t => t.id === a.id))
@@ -66,18 +52,18 @@ export const HomePage: React.FC = () => {
 
   // If we still don't have 4, fill from general pool (excluding already used)
   if (smallTechArticles.length < 4) {
-      const remaining = MOCK_ARTICLES.filter(a => 
-          a.id !== bigTechArticle.id && 
+      const remaining = allArticles.filter(a => 
+          a.id !== bigTechArticle?.id &&
           !smallTechArticles.some(s => s.id === a.id)
       );
       smallTechArticles.push(...remaining.slice(0, 4 - smallTechArticles.length));
   }
   
-  // Shifted slider articles (Indices 9-14)
-  const moreArticles = MOCK_ARTICLES.slice(9, 14);
-  
-  // Specific articles for sections (Index 8)
-  const multimediaArticle = MOCK_ARTICLES[8]; 
+  // Bottom slider: older posts
+  const moreArticles = allArticles.slice(9, 14).length ? allArticles.slice(9, 14) : allArticles.slice(0, 5);
+
+  // Multimedia section
+  const multimediaArticle = pick(8);
   const photoOfDayUrl = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2674&auto=format&fit=crop";
 
   // Slider Logic (Bottom Section)
@@ -206,7 +192,7 @@ export const HomePage: React.FC = () => {
                     className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar scroll-smooth pr-[calc(50vw_-_50%)]"
                 >
                     {moreArticles.map((article) => {
-                        const category = CATEGORIES.find(c => c.id === article.categoryId);
+                        const category = allCategories.find(c => c.id === article.categoryId);
                         const catColorBg = category?.color || 'bg-stone-500';
                         const catColorBorder = catColorBg.replace('bg-', 'border-');
 
@@ -502,7 +488,7 @@ export const HomePage: React.FC = () => {
                        
                        <div className="space-y-4">
                           {travelSidebarItems.map((article) => (
-                             <Link key={article.id} to={article.id.startsWith('dummy') ? '#' : `/article/${article.id}`} className="flex gap-4 group">
+                             <Link key={article.id} to={`/article/${article.id}`} className="flex gap-4 group">
                                 <div className="w-24 h-24 bg-stone-800 flex-shrink-0 overflow-hidden">
                                    <img 
                                      src={article.imageUrl} 
