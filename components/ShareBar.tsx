@@ -46,7 +46,8 @@ export const ShareBar: React.FC<{ title: string }> = ({ title }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const circle = 'w-11 h-11 rounded-full flex items-center justify-center text-white shadow-sm transition-transform hover:-translate-y-0.5 active:scale-95';
+  // Mobile: 8 equal squares in one row; sm+: fixed 44px circles
+  const circle = 'w-full aspect-square sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shadow-sm transition-transform hover:-translate-y-0.5 active:scale-95';
 
   return (
     <section className="mt-10 pt-8 border-t border-stone-200" aria-label="Podijeli članak">
@@ -61,7 +62,7 @@ export const ShareBar: React.FC<{ title: string }> = ({ title }) => {
           </button>
         )}
       </div>
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-8 gap-2 sm:flex sm:flex-wrap sm:gap-3">
         {networks.map(n => (
           <a key={n.name} href={n.href} target="_blank" rel="noopener noreferrer" aria-label={`Podijeli na ${n.name}`} title={n.name} className={`${circle} ${n.color}`}>
             {n.icon}
