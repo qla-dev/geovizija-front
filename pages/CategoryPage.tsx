@@ -3,6 +3,7 @@ import { useContent } from '../components/ContentProvider';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { SEO } from '../components/SEO';
+import { AdSlot } from '../components/AdSlot';
 import { Article, Category } from '../types';
 
 // 1 članak, 2-4 članka, 5+ članaka (11-14 always "članaka")
@@ -61,9 +62,10 @@ export const CategoryPage: React.FC = () => {
 
       {/* Mobile: stacked editorial list */}
       <div className="md:hidden bg-white">
-        {entries.map(({ category, posts, latest, image, number }) => (
+        {entries.map(({ category, posts, latest, image, number }, index) => (
+          <React.Fragment key={category.id}>
+          {index === 4 && <div className="px-4 py-5 border-b border-stone-200 bg-stone-100"><AdSlot /></div>}
           <Link
-            key={category.id}
             to={`/category/${category.id}`}
             className="flex gap-4 px-4 py-4 border-b border-stone-200 active:bg-stone-50"
           >
@@ -83,6 +85,7 @@ export const CategoryPage: React.FC = () => {
             </div>
             <ArrowRight size={18} className="self-center flex-shrink-0 text-stone-300" />
           </Link>
+          </React.Fragment>
         ))}
       </div>
 
@@ -95,6 +98,7 @@ export const CategoryPage: React.FC = () => {
             <CategoryTile key={entry.category.id} entry={entry} wide={i === rest.length - 1 && (rest.length - 2) % 3 === 2} />
           ))}
         </div>
+        <AdSlot className="mt-10" />
       </div>
     </div>
   );

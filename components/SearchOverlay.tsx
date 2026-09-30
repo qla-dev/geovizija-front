@@ -15,6 +15,9 @@ type Result =
 
 const MAX_ARTICLES = 12;
 
+// Body text without in-text image lines ('![caption](url)') and subheading markers.
+const bodyText = (content: string) => content.replace(/^!\[[^\]]*\]\([^)]*\)$/gm, '').replace(/^## /gm, '');
+
 /** Snippet of the text around the first matching word. */
 const snippetAround = (text: string, term: string) => {
   const index = normalize(text).indexOf(term);
@@ -61,7 +64,7 @@ export const SearchOverlay: React.FC<{ open: boolean; onClose: () => void }> = (
       .map(article => {
         const title = normalize(article.title);
         const excerpt = normalize(article.excerpt ?? '');
-        const content = normalize(article.content ?? '');
+        const content = normalize(bodyText(article.content ?? ''));
         const meta = normalize(`${article.author} ${categoryName(article.categoryId)}`);
         let score = 0;
         for (const term of terms) {
@@ -75,7 +78,7 @@ export const SearchOverlay: React.FC<{ open: boolean; onClose: () => void }> = (
           kind: 'article' as const,
           article,
           score,
-          snippet: inTitleOrExcerpt ? article.excerpt : snippetAround(article.content ?? '', terms[0]) || article.excerpt,
+          snippet: inTitleOrExcerpt ? article.excerpt : snippetAround(bodyText(article.content ?? ''), terms[0]) || article.excerpt,
         };
       })
       .filter((r): r is NonNullable<typeof r> => r !== null)

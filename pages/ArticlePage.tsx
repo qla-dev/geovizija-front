@@ -4,6 +4,7 @@ import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
 import { Clock, ArrowLeft, ArrowRightLeft, MessageSquare, ThumbsUp, MousePointerClick } from 'lucide-react';
 import { ShareBar } from '../components/ShareBar';
+import { AdSlot } from '../components/AdSlot';
 import { SEO } from '../components/SEO';
 
 export const ArticlePage: React.FC = () => {
@@ -150,15 +151,37 @@ export const ArticlePage: React.FC = () => {
 
             {/* Main Content */}
             <div className="prose prose-lg prose-stone max-w-none font-serif text-stone-700">
-              {/* Blocks are separated by blank lines; "## " starts a subheading */}
-              {article.content.split(/\n\s*\n/).map(block => block.trim()).filter(Boolean).map((block, index) => (
-                 block.startsWith('## ')
-                   ? <h2 key={index} className="text-2xl md:text-3xl font-bold text-stone-900 mt-10 mb-4">{block.slice(3)}</h2>
-                   : <p key={index} className="mb-6 leading-loose">{block}</p>
-              ))}
+              {/* One block per line: "## " subheading, "![caption](url)" image, otherwise a paragraph.
+                  An ad slot follows the third paragraph. */}
+              {(() => {
+                let paragraphs = 0;
+                return article.content.split(/\n+/).map(line => line.trim()).filter(Boolean).map((block, index) => {
+                  if (block.startsWith('## ')) {
+                    return <h2 key={index} className="text-2xl md:text-3xl font-bold text-stone-900 mt-10 mb-4">{block.slice(3)}</h2>;
+                  }
+                  const image = block.match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
+                  if (image) {
+                    return (
+                      <figure key={index} className="my-8 -mx-4 sm:mx-0 not-prose">
+                        <img src={image[2]} alt={image[1]} loading="lazy" className="w-full aspect-video object-cover bg-stone-200" />
+                        {image[1] && <figcaption className="px-4 sm:px-0 mt-2 text-sm font-sans text-stone-500 leading-snug">{image[1]}</figcaption>}
+                      </figure>
+                    );
+                  }
+                  paragraphs++;
+                  return (
+                    <React.Fragment key={index}>
+                      <p className="mb-6 leading-loose">{block}</p>
+                      {paragraphs === 3 && <AdSlot variant="rectangle" className="my-8 not-prose" />}
+                    </React.Fragment>
+                  );
+                });
+              })()}
             </div>
 
             <ShareBar title={article.title} />
+
+            <AdSlot className="mt-8" />
 
             {/* COMMENTING MECHANISM */}
             <div className="mt-16">

@@ -4,6 +4,7 @@ import { setQuizProgress } from '../services/quizProgress';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, X, Trophy, RotateCcw, Share2 } from 'lucide-react';
 import { SEO } from '../components/SEO';
+import { AdSlot } from '../components/AdSlot';
 import { api } from '../services/api';
 import { Quiz } from '../types';
 import { formatQuizDate, getQuizResult, QuizResult, saveQuizResult } from '../services/quizResults';
@@ -216,6 +217,7 @@ export const QuizPlayPage: React.FC = () => {
           </Link>
           <span className="text-stone-400">{reviewing ? 'Pregled · ' : ''}<span className="text-stone-900">{index + 1}</span> / {total}</span>
         </div>
+        <AdSlot className="mt-4" />
         {question.topic && <p className="mt-5 text-[11px] font-bold uppercase tracking-widest text-geo-green">{question.topic}</p>}
         <h1 className="font-serif font-bold text-2xl md:text-3xl text-stone-900 leading-snug mt-2">{question.question}</h1>
 
@@ -225,14 +227,14 @@ export const QuizPlayPage: React.FC = () => {
               key={i}
               onClick={() => choose(i)}
               disabled={answered}
-              className={`flex flex-col items-start gap-3 min-h-[120px] md:min-h-0 md:flex-row md:items-center md:gap-4 w-full text-left border-2 p-3 md:px-4 md:py-4 transition-all ${optionStyle(i)}`}
+              className={`flex items-center gap-2.5 min-h-[64px] md:gap-4 w-full text-left border-2 p-2.5 md:px-4 md:py-4 transition-all ${optionStyle(i)}`}
             >
-              <span className={`w-8 h-8 flex-shrink-0 flex items-center justify-center text-xs font-black rounded-full ${
+              <span className={`w-7 h-7 md:w-8 md:h-8 flex-shrink-0 flex items-center justify-center text-xs font-black rounded-full ${
                 answered && i === question.correctIndex ? 'bg-geo-green text-white'
                   : answered && i === chosen ? 'bg-rose-500 text-white' : 'bg-stone-100 text-stone-500'}`}>
                 {answered && i === question.correctIndex ? <Check size={16} /> : answered && i === chosen ? <X size={16} /> : LETTERS[i]}
               </span>
-              <span className="font-medium leading-snug text-[15px] md:text-base">{option}</span>
+              <span className="font-medium leading-tight text-sm md:text-base">{option}</span>
             </button>
           ))}
         </div>

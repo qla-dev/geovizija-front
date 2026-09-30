@@ -4,6 +4,7 @@ import { useContent } from '../components/ContentProvider';
 import { ArticleCard } from '../components/ArticleCard';
 import { Grid, List, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { SEO } from '../components/SEO';
+import { AdSlot } from '../components/AdSlot';
 
 // 6 fills whole rows in both the 2-column (mobile) and 3-column (desktop) grid
 const ITEMS_PER_PAGE = 6;
@@ -142,18 +143,24 @@ export const CategoryNewsPage: React.FC = () => {
          ) : (
              viewMode === 'grid' ? (
                // Grid: compact photo tiles, 2 per row on mobile
+               <>
                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                   {currentArticles.map((article) => (
                      <ArticleCard key={article.id} article={article} variant="tile" />
                   ))}
                </div>
+               <AdSlot className="mt-6" />
+               </>
              ) : (
                // List: one large card per row
                <div className="grid grid-cols-1 gap-6">
-                  {currentArticles.map((article) => (
-                     <div key={article.id} className="h-auto md:h-64">
-                        <ArticleCard article={article} variant="horizontal" />
-                     </div>
+                  {currentArticles.map((article, i) => (
+                     <React.Fragment key={article.id}>
+                       <div className="h-auto md:h-64">
+                          <ArticleCard article={article} variant="horizontal" />
+                       </div>
+                       {i === 1 && <AdSlot />}
+                     </React.Fragment>
                   ))}
                </div>
              )
