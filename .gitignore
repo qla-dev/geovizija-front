@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Laravel backend is deployed inside the web root as ./endpoints (separate repo)
+/endpoints/
