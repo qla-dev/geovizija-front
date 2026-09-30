@@ -7,6 +7,14 @@ import { SEO } from '../components/SEO';
 
 const ITEMS_PER_PAGE = 5;
 
+// 1 članak, 2-4 članka, 5+ članaka (11-14 always "članaka")
+const articlesWord = (count: number) => {
+  const last = count % 10, lastTwo = count % 100;
+  if (last === 1 && lastTwo !== 11) return 'članak';
+  if (last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14)) return 'članka';
+  return 'članaka';
+};
+
 export const CategoryNewsPage: React.FC = () => {
   const { articles: allArticles, categories: allCategories } = useContent();
   const { categoryId } = useParams();
@@ -57,62 +65,55 @@ export const CategoryNewsPage: React.FC = () => {
         image={category.imageUrl}
       />
 
-      {/* Category Hero Header */}
-      <div className={`w-full py-20 md:py-32 relative text-white shadow-xl overflow-hidden`}>
-         {/* Background Image */}
-         <img 
-            src={category.imageUrl} 
+      {/* Category Hero Header: breadcrumbs pinned to the top, title at the bottom */}
+      <div className="w-full relative text-white overflow-hidden bg-stone-900">
+         {/* Background: the category's newest story, falling back to the category image */}
+         <img
+            src={articles[0]?.imageUrl || category.imageUrl}
             alt={category.name}
             className="absolute inset-0 w-full h-full object-cover"
          />
-         {/* Color Overlay */}
-         <div className={`absolute inset-0 ${category.color} opacity-90 mix-blend-multiply`}></div>
-         
-         {/* Decorative big letter */}
-         <div className="absolute -right-10 -bottom-20 text-white/10 font-serif text-[12rem] md:text-[25rem] font-black leading-none select-none">
-            {category.name.charAt(0)}
-         </div>
-         
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="flex items-center gap-2 text-white/80 text-xs font-bold uppercase tracking-widest mb-6">
+         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/60"></div>
+         <span className={`absolute left-0 bottom-0 h-1 w-full ${category.color}`}></span>
+
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-4 md:pt-8 pb-20 md:pb-28">
+            <nav className="flex items-center gap-2 text-white/70 text-[11px] md:text-xs font-bold uppercase tracking-widest">
                <Link to="/" className="hover:text-white transition-colors">Naslovna</Link>
-               <span>/</span>
+               <span className="text-white/40">/</span>
                <Link to="/categories" className="hover:text-white transition-colors">Kategorije</Link>
-               <span>/</span>
-               <span className="text-white border-b border-white pb-0.5">{category.name}</span>
-            </div>
-            <h1 className="text-5xl md:text-8xl font-serif font-black mb-6 drop-shadow-lg tracking-tight">
+               <span className="text-white/40">/</span>
+               <span className="text-white truncate">{category.name}</span>
+            </nav>
+            <h1 className="mt-20 md:mt-32 text-5xl md:text-8xl font-serif font-black mb-4 md:mb-6 drop-shadow-lg tracking-tight leading-none">
               {category.name}
             </h1>
-            <p className="text-xl md:text-2xl font-serif text-white/90 max-w-2xl leading-relaxed drop-shadow-md">
-              Najnovije vijesti, analize i reportaže iz svijeta {category.name.toLowerCase()}. Istražite dublje.
+            <p className="text-lg md:text-2xl font-serif text-white/85 max-w-2xl leading-relaxed drop-shadow-md">
+              Najnovije vijesti, analize i reportaže iz svijeta {category.name.toLowerCase()}.
             </p>
          </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
-         {/* Controls Bar */}
-         <div className="bg-white p-4 rounded-sm shadow-lg flex flex-col md:flex-row justify-between items-center gap-4 mb-8 border border-stone-200">
-            <div className="text-stone-500 font-medium text-sm">
-               Prikazano <span className="text-stone-900 font-bold">{currentArticles.length}</span> od <span className="text-stone-900 font-bold">{articles.length}</span> članaka
+         {/* Controls Bar: stacked with a full-width switch on mobile, one row on desktop */}
+         <div className="bg-white p-3 md:p-4 shadow-lg flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6 md:mb-8 border border-stone-200">
+            <div className="text-stone-500 font-medium text-xs md:text-sm uppercase md:normal-case tracking-widest md:tracking-normal px-1">
+               <span className="text-stone-900 font-bold">{articles.length}</span> {articlesWord(articles.length)}
+               {totalPages > 1 && <span className="text-stone-400"> · stranica {currentPage}/{totalPages}</span>}
             </div>
-            
-            <div className="flex items-center gap-2">
-               <span className="text-xs uppercase font-bold text-stone-400 mr-2 hidden md:inline">Prikaz:</span>
-               <button 
-                 onClick={() => setViewMode('grid')}
-                 className={`p-2 rounded hover:bg-stone-100 transition-colors ${viewMode === 'grid' ? 'text-geo-green bg-stone-50 ring-1 ring-stone-200' : 'text-stone-400'}`}
-                 title="Mreža"
-               >
-                 <Grid size={20} />
-               </button>
-               <button 
-                 onClick={() => setViewMode('list')}
-                 className={`p-2 rounded hover:bg-stone-100 transition-colors ${viewMode === 'list' ? 'text-geo-green bg-stone-50 ring-1 ring-stone-200' : 'text-stone-400'}`}
-                 title="Lista"
-               >
-                 <List size={20} />
-               </button>
+
+            <div className="grid grid-cols-2 w-full md:w-auto md:inline-grid bg-stone-100 p-1 gap-1" role="group" aria-label="Prikaz">
+               {([['list', 'Lista', List], ['grid', 'Mreža', Grid]] as const).map(([mode, label, Icon]) => (
+                 <button
+                   key={mode}
+                   onClick={() => setViewMode(mode)}
+                   aria-pressed={viewMode === mode}
+                   className={`flex items-center justify-center gap-2 py-2.5 md:py-2 md:px-4 text-xs font-bold uppercase tracking-widest transition-colors ${
+                     viewMode === mode ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-900'
+                   }`}
+                 >
+                   <Icon size={16} className={viewMode === mode ? 'text-geo-green' : ''} /> {label}
+                 </button>
+               ))}
             </div>
          </div>
 
@@ -131,7 +132,7 @@ export const CategoryNewsPage: React.FC = () => {
          ) : (
              <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
                 {currentArticles.map((article) => (
-                   <div key={article.id} className={viewMode === 'grid' ? 'h-[480px]' : 'h-auto md:h-64'}>
+                   <div key={article.id} className={viewMode === 'grid' ? 'md:h-[480px]' : 'h-auto md:h-64'}>
                       <ArticleCard 
                         article={article} 
                         variant={viewMode === 'grid' ? 'standard' : 'horizontal'} 

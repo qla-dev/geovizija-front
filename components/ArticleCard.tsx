@@ -42,7 +42,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
   if (variant === 'horizontal') {
     return (
       <Link to={`/article/${article.id}`} className="group flex flex-col md:flex-row h-full bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-        <div className="md:w-2/5 relative overflow-hidden bg-stone-200">
+        {/* Mobile: the image is absolutely positioned, so the box needs its own height */}
+        <div className="aspect-video md:aspect-auto md:w-2/5 relative overflow-hidden bg-stone-200 flex-shrink-0">
           <img 
             src={article.imageUrl} 
             alt={article.title} 
@@ -52,8 +53,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
              <CategoryPill id={article.categoryId} />
           </div>
         </div>
-        <div className="flex-1 p-6 flex flex-col justify-center">
-          <h3 className="font-serif text-2xl font-bold text-stone-900 leading-snug mb-3 group-hover:text-geo-green transition-colors">
+        <div className="flex-1 p-5 md:p-6 flex flex-col justify-center">
+          <h3 className="font-serif text-xl md:text-2xl font-bold text-stone-900 leading-snug mb-3 group-hover:text-geo-green transition-colors">
             {article.title}
           </h3>
           <p className="text-stone-600 text-sm leading-relaxed mb-4 line-clamp-3">
