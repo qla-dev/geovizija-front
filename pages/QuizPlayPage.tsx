@@ -217,7 +217,6 @@ export const QuizPlayPage: React.FC = () => {
           </Link>
           <span className="text-stone-400">{reviewing ? 'Pregled · ' : ''}<span className="text-stone-900">{index + 1}</span> / {total}</span>
         </div>
-        <AdSlot className="mt-4" />
         {question.topic && <p className="mt-5 text-[11px] font-bold uppercase tracking-widest text-geo-green">{question.topic}</p>}
         <h1 className="font-serif font-bold text-2xl md:text-3xl text-stone-900 leading-snug mt-2">{question.question}</h1>
 
@@ -238,6 +237,9 @@ export const QuizPlayPage: React.FC = () => {
             </button>
           ))}
         </div>
+
+        {/* Ad below the answers */}
+        <AdSlot className="mt-8" />
 
         {answered && (
           <div className="mt-6">
