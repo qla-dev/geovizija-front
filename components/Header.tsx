@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useContent } from './ContentProvider';
-import { SearchOverlay, OPEN_SEARCH_EVENT } from './SearchOverlay';
+import { SearchOverlay, OPEN_SEARCH_EVENT, openSearch } from './SearchOverlay';
 import { Menu, Search, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind } from 'lucide-react';
 
 // Mock Weather Data for 20 Main Cities (Ex-Yu Region)
@@ -55,7 +55,7 @@ export const Header: React.FC = () => {
       const typing = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
       if ((event.key === 'k' && (event.metaKey || event.ctrlKey)) || (event.key === '/' && !typing)) {
         event.preventDefault();
-        setSearchOpen(true);
+        openSearch();
       }
     };
     const onOpen = () => setSearchOpen(true);
@@ -142,7 +142,7 @@ export const Header: React.FC = () => {
           {/* Desktop Right Actions: Search & Weather */}
           <div className="hidden md:flex items-center gap-6">
              
-             <button onClick={() => setSearchOpen(true)} className="p-2 text-stone-300 hover:text-white transition-colors" aria-label="Pretraga (Ctrl+K)" title="Pretraga (Ctrl+K)">
+             <button onClick={openSearch} className="p-2 text-stone-300 hover:text-white transition-colors" aria-label="Pretraga (Ctrl+K)" title="Pretraga (Ctrl+K)">
                <Search size={20} />
              </button>
 
@@ -161,7 +161,7 @@ export const Header: React.FC = () => {
 
           {/* Mobile Right: Search */}
           <div className="flex items-center justify-end md:hidden w-24">
-             <button onClick={() => setSearchOpen(true)} className="p-2 -mr-2 text-stone-300 hover:text-white" aria-label="Pretraga">
+             <button onClick={openSearch} className="p-2 -mr-2 text-stone-300 hover:text-white" aria-label="Pretraga">
                <Search size={24} />
              </button>
           </div>

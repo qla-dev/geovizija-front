@@ -30,16 +30,19 @@ export const SearchOverlay: React.FC<{ open: boolean; onClose: () => void }> = (
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
 
-  // Focus on open, lock page scroll while open, reset when closed.
+  // Lock page scroll while open; clear the field and drop focus (hides the keyboard) when closed.
+  // Focusing happens synchronously in openSearch(), not here.
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      inputRef.current?.blur();
+      return;
+    }
     setQuery('');
     setActive(0);
-    const focusTimer = setTimeout(() => inputRef.current?.focus(), 50);
+    inputRef.current?.focus({ preventScroll: true }); // already focused when opened by a tap
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      clearTimeout(focusTimer);
       document.body.style.overflow = previousOverflow;
     };
   }, [open]);
@@ -96,19 +99,29 @@ export const SearchOverlay: React.FC<{ open: boolean; onClose: () => void }> = (
     else if (event.key === 'Enter' && results[active]) openResult(results[active]);
   };
 
-  if (!open) return null;
+  // Stays mounted while closed (invisible, not display:none) so openSearch() can focus the input
+  // inside the tap itself: iOS Safari only opens the keyboard for focus() within the user gesture.
 
   const hasQuery = normalize(query).trim().length > 1;
 
   // Portal to <body>: the sticky header is its own stacking context and would trap the overlay's z-index.
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex flex-col bg-stone-950/95 backdrop-blur-sm animate-fade-in" onKeyDown={onKeyDown} role="dialog" aria-modal="true" aria-label="Pretraga">
+    <div
+      className={`fixed inset-0 z-[100] flex flex-col bg-stone-950/95 backdrop-blur-sm transition-opacity duration-200 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      onKeyDown={onKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Pretraga"
+      aria-hidden={!open}
+    >
       {/* Search field */}
       <div className="border-b border-white/10">
         <div className="max-w-3xl mx-auto px-4 flex items-center gap-3 h-16 md:h-20">
           <Search size={22} className="text-geo-green flex-shrink-0" />
           <input
             ref={inputRef}
+            id={SEARCH_INPUT_ID}
+            tabIndex={open ? 0 : -1}
             value={query}
             onChange={e => setQuery(e.target.value)}
             type="search"
@@ -195,4 +208,10 @@ export const SearchOverlay: React.FC<{ open: boolean; onClose: () => void }> = (
 
 /** Lets other components (e.g. the bottom nav) open the header's search. */
 export const OPEN_SEARCH_EVENT = 'geovizija:open-search';
-export const openSearch = () => window.dispatchEvent(new Event(OPEN_SEARCH_EVENT));
+const SEARCH_INPUT_ID = 'geovizija-search-input';
+
+/** Call directly from a click/tap handler: focusing synchronously is what opens the mobile keyboard. */
+export const openSearch = () => {
+  document.getElementById(SEARCH_INPUT_ID)?.focus({ preventScroll: true });
+  window.dispatchEvent(new Event(OPEN_SEARCH_EVENT));
+};
