@@ -98,28 +98,32 @@ export const ArticlePage: React.FC = () => {
            <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl font-bold text-white leading-tight mb-6 drop-shadow-lg max-w-5xl">
              {article.title}
            </h1>
-           <div className="flex flex-col sm:flex-row sm:items-center gap-6 text-white font-medium tracking-wide text-sm">
-              <div className="flex items-center gap-2">
-                 <div className="w-10 h-10 rounded-full bg-geo-green flex items-center justify-center text-stone-900 font-bold text-lg">
+           {/* Author, reading time and date share one row on every screen size */}
+           <div className="flex flex-row items-center gap-3 sm:gap-6 text-white font-medium tracking-wide text-xs sm:text-sm">
+              <div className="flex items-center gap-2 min-w-0">
+                 <div className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 rounded-full bg-geo-green flex items-center justify-center text-stone-900 font-bold text-sm sm:text-lg">
                    {article.author.charAt(0)}
                  </div>
-                 <div className="flex flex-col">
-                   <span className="uppercase text-xs text-stone-300">Autor</span>
-                   <span>{article.author}</span>
+                 <div className="flex flex-col min-w-0">
+                   <span className="uppercase text-[10px] sm:text-xs text-stone-300">Autor</span>
+                   <span className="truncate">{article.author}</span>
                  </div>
               </div>
-              <div className="hidden sm:block w-px h-8 bg-white/20"></div>
-              <div className="flex items-center gap-2">
-                 <Clock size={18} className="text-geo-green" />
+              <div className="w-px h-8 bg-white/20 flex-shrink-0"></div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                 <Clock size={16} className="text-geo-green hidden sm:block" />
                  <div className="flex flex-col">
-                   <span className="uppercase text-xs text-stone-300">Vrijeme čitanja</span>
-                   <span>{article.readTime} min</span>
+                   <span className="uppercase text-[10px] sm:text-xs text-stone-300">
+                     <span className="sm:hidden">Čitanje</span>
+                     <span className="hidden sm:inline">Vrijeme čitanja</span>
+                   </span>
+                   <span className="whitespace-nowrap">{article.readTime} min</span>
                  </div>
               </div>
-              <div className="hidden sm:block w-px h-8 bg-white/20"></div>
-              <div className="flex flex-col">
-                   <span className="uppercase text-xs text-stone-300">Objavljeno</span>
-                   <span>{article.date}</span>
+              <div className="w-px h-8 bg-white/20 flex-shrink-0"></div>
+              <div className="flex flex-col flex-shrink-0">
+                   <span className="uppercase text-[10px] sm:text-xs text-stone-300">Objavljeno</span>
+                   <span className="whitespace-nowrap">{article.date}</span>
               </div>
            </div>
         </div>
