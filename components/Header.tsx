@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useContent } from './ContentProvider';
 import { SearchOverlay, OPEN_SEARCH_EVENT, openSearch } from './SearchOverlay';
+import { useQuizProgress } from '../services/quizProgress';
 import { Menu, Search, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind } from 'lucide-react';
 
 // Mock Weather Data for 20 Main Cities (Ex-Yu Region)
@@ -47,6 +48,7 @@ export const Header: React.FC = () => {
   const [weatherIndex, setWeatherIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
+  const quizProgress = useQuizProgress();
 
   // Ctrl/Cmd+K or "/" (outside text fields) opens search
   useEffect(() => {
@@ -86,7 +88,7 @@ export const Header: React.FC = () => {
   const currentWeather = CITIES[weatherIndex];
 
   return (
-    <header className="sticky top-0 z-50 bg-stone-950 text-white border-b-4 border-geo-green shadow-lg">
+    <header className={`sticky top-0 z-50 bg-stone-950 text-white shadow-lg ${quizProgress ? '' : 'border-b-4 border-geo-green'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
@@ -167,6 +169,20 @@ export const Header: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* During a quiz the 4px bottom border becomes the question stepper */}
+      {quizProgress && (
+        <div className="flex h-1 gap-0.5 bg-stone-950" role="progressbar" aria-valuemin={1} aria-valuemax={quizProgress.results.length} aria-valuenow={quizProgress.current + 1}>
+          {quizProgress.results.map((result, i) => (
+            <span
+              key={i}
+              className={`flex-1 transition-colors duration-300 ${
+                result === true ? 'bg-geo-green' : result === false ? 'bg-rose-500'
+                  : i === quizProgress.current ? 'bg-white' : 'bg-stone-700'
+              }`}
+            />
+          ))}
+        </div>
+      )}
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { setQuizProgress } from '../services/quizProgress';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, X, Trophy, RotateCcw, Share2 } from 'lucide-react';
 import { SEO } from '../components/SEO';
@@ -41,6 +42,15 @@ export const QuizPlayPage: React.FC = () => {
   };
 
   useEffect(load, [date]);
+
+  // Drive the header's bottom-border stepper while a question is on screen
+  const showingQuestions = quiz !== null && (!result || reviewing);
+  useEffect(() => {
+    setQuizProgress(showingQuestions && quiz
+      ? { current: index, results: quiz.questions.map((q, i) => answers[i] === undefined ? null : answers[i] === q.correctIndex) }
+      : null);
+  }, [showingQuestions, quiz, index, answers]);
+  useEffect(() => () => setQuizProgress(null), []);
 
   if (error) {
     return (
@@ -147,28 +157,14 @@ export const QuizPlayPage: React.FC = () => {
     <div className="animate-fade-in min-h-[80vh] bg-stone-100">
       <SEO title={`${quiz.title} | Geovizija kviz`} />
 
-      {/* Progress */}
-      <div className="bg-stone-950 text-white">
-        <div className="max-w-2xl mx-auto px-4 pt-4 pb-5">
-          <div className="flex items-center justify-between text-xs uppercase tracking-widest">
-            <Link to="/quiz" className="flex items-center gap-1 text-stone-400 hover:text-white" aria-label="Nazad na kvizove">
-              <ArrowLeft size={16} /> Kvizovi
-            </Link>
-            <span className="text-stone-400">{reviewing ? 'Pregled · ' : ''}<span className="text-white font-bold">{index + 1}</span> / {total}</span>
-          </div>
-          <div className="mt-4 grid gap-1" style={{ gridTemplateColumns: `repeat(${total}, 1fr)` }}>
-            {quiz.questions.map((q, i) => {
-              const a = answers[i];
-              const color = a === undefined ? (i === index ? 'bg-white' : 'bg-stone-700')
-                : a === q.correctIndex ? 'bg-geo-green' : 'bg-rose-500';
-              return <span key={q.id} className={`h-1.5 rounded-full transition-colors ${color} ${i === index ? 'ring-2 ring-white/30' : ''}`} />;
-            })}
-          </div>
-        </div>
-      </div>
-
       <div key={index} className={`max-w-2xl mx-auto px-4 pt-6 md:py-10 animate-fade-in ${answered ? 'pb-28 md:pb-10' : 'pb-6'}`}>
-        {question.topic && <p className="text-[11px] font-bold uppercase tracking-widest text-geo-green">{question.topic}</p>}
+        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest">
+          <Link to="/quiz" className="flex items-center gap-1 text-stone-400 hover:text-stone-900" aria-label="Nazad na kvizove">
+            <ArrowLeft size={14} /> Kvizovi
+          </Link>
+          <span className="text-stone-400">{reviewing ? 'Pregled · ' : ''}<span className="text-stone-900">{index + 1}</span> / {total}</span>
+        </div>
+        {question.topic && <p className="mt-5 text-[11px] font-bold uppercase tracking-widest text-geo-green">{question.topic}</p>}
         <h1 className="font-serif font-bold text-2xl md:text-3xl text-stone-900 leading-snug mt-2">{question.question}</h1>
 
         <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-1">
