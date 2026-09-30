@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useContent } from './ContentProvider';
+import { SearchOverlay, OPEN_SEARCH_EVENT } from './SearchOverlay';
 import { Menu, Search, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind } from 'lucide-react';
 
 // Mock Weather Data for 20 Main Cities (Ex-Yu Region)
@@ -45,6 +46,29 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const [weatherIndex, setWeatherIndex] = useState(0);
   const [fade, setFade] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Ctrl/Cmd+K or "/" (outside text fields) opens search
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      const typing = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+      if ((event.key === 'k' && (event.metaKey || event.ctrlKey)) || (event.key === '/' && !typing)) {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    const onOpen = () => setSearchOpen(true);
+    window.addEventListener('keydown', onKey);
+    window.addEventListener(OPEN_SEARCH_EVENT, onOpen);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener(OPEN_SEARCH_EVENT, onOpen);
+    };
+  }, []);
+
+  // Close search when the route changes
+  useEffect(() => setSearchOpen(false), [location.pathname]);
 
   // Weather auto-change animation
   useEffect(() => {
@@ -118,7 +142,7 @@ export const Header: React.FC = () => {
           {/* Desktop Right Actions: Search & Weather */}
           <div className="hidden md:flex items-center gap-6">
              
-             <button className="p-2 text-stone-300 hover:text-white transition-colors">
+             <button onClick={() => setSearchOpen(true)} className="p-2 text-stone-300 hover:text-white transition-colors" aria-label="Pretraga (Ctrl+K)" title="Pretraga (Ctrl+K)">
                <Search size={20} />
              </button>
 
@@ -137,12 +161,13 @@ export const Header: React.FC = () => {
 
           {/* Mobile Right: Search */}
           <div className="flex items-center justify-end md:hidden w-24">
-             <button className="p-2 -mr-2 text-stone-300 hover:text-white">
+             <button onClick={() => setSearchOpen(true)} className="p-2 -mr-2 text-stone-300 hover:text-white" aria-label="Pretraga">
                <Search size={24} />
              </button>
           </div>
         </div>
       </div>
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 };
