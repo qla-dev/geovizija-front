@@ -36,7 +36,8 @@ export const QuizPlayPage: React.FC = () => {
         if (saved) { setResult(saved); setAnswers(saved.answers); }
         if (date === 'today') navigate(`/quiz/${q.date}`, { replace: true });
       })
-      .catch((e: Error) => setError(e.message));
+      // 503 carries a friendly message from the API; other server errors must not show raw details
+      .catch((e: Error & { status?: number }) => setError(e.status === 503 || (e.status && e.status < 500) ? e.message : 'Kviz trenutno nije dostupan. Pokušajte ponovo malo kasnije.'));
   };
 
   useEffect(load, [date]);
