@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { Article, Category } from '../types';
+import { Article, Category, Quiz, QuizSummary } from '../types';
 
 // Pick the backend with VITE_API_BACKEND in .env.local (default: production).
 //   production -> the deployed Laravel API (works from a local `npm run dev` too)
@@ -44,4 +44,10 @@ export const api = {
     return (await request<Article[]>(`/posts?${query}`)).data;
   },
   post: async (idOrSlug: string): Promise<Article> => (await request<Article>(`/posts/${encodeURIComponent(idOrSlug)}`)).data,
+  quizzes: async (): Promise<{ quizzes: QuizSummary[]; today: string }> => {
+    const payload = await request<QuizSummary[]>('/quizzes') as Envelope<QuizSummary[]> & { today: string };
+    return { quizzes: payload.data, today: payload.today };
+  },
+  // 'today' generates the quiz on the first request of the day, which can take ~20s
+  quiz: async (date: string | 'today'): Promise<Quiz> => (await request<Quiz>(`/quizzes/${date}`)).data,
 };

@@ -1,13 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Grid, Compass, Bookmark, User } from 'lucide-react';
+import { Home, Grid, Compass, Brain, User } from 'lucide-react';
 import { openSearch } from './SearchOverlay';
 
 export const BottomNav: React.FC = () => {
   const navItems = [
     { to: '/', icon: Home, label: 'Naslovna' },
     { to: '/categories', icon: Grid, label: 'Kategorije' },
-    { to: '/saved', icon: Bookmark, label: 'Spremljeno' }, // Placeholder
+    { to: '/quiz', icon: Brain, label: 'Kviz' },
     { to: '/profile', icon: User, label: 'Profil' }, // Placeholder
   ];
 

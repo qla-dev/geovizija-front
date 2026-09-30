@@ -28,3 +28,23 @@ export interface Article {
   readTime: number;
   featured?: boolean;
 }
+
+export interface QuizSummary {
+  date: string; // Y-m-d
+  title: string;
+  intro: string | null;
+  questionsCount: number;
+}
+
+export interface QuizQuestion {
+  id: number;
+  topic: string | null;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string | null;
+}
+
+export interface Quiz extends QuizSummary {
+  questions: QuizQuestion[];
+}

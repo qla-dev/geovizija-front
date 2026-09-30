@@ -6,6 +6,8 @@ import { HomePage } from './pages/HomePage';
 import { CategoryPage } from './pages/CategoryPage';
 import { ArticlePage } from './pages/ArticlePage';
 import { CategoryNewsPage } from './pages/CategoryNewsPage';
+import { QuizHomePage } from './pages/QuizHomePage';
+import { QuizPlayPage } from './pages/QuizPlayPage';
 
 // Scroll to top component that listens to location changes
 const ScrollToTop = () => {
@@ -29,6 +31,8 @@ const App: React.FC = () => {
           <Route path="/categories" element={<CategoryPage />} />
           <Route path="/category/:categoryId" element={<CategoryNewsPage />} />
           <Route path="/article/:id" element={<ArticlePage />} />
+          <Route path="/quiz" element={<QuizHomePage />} />
+          <Route path="/quiz/:date" element={<QuizPlayPage />} />
           <Route path="*" element={<div className="p-10 text-center">404 - Stranica nije pronađena</div>} />
         </Routes>
       </Layout>
