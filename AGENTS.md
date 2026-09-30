@@ -4,6 +4,13 @@ React + Vite site served at https://geovizija.com. This repo is the web root: `.
 
 The API lives at `https://geovizija.com/endpoints/api/...` (`/categories`, `/posts`, `/posts/{id or slug}`).
 
+All content comes from that API: `services/api.ts` is the client, `components/ContentProvider.tsx` loads categories and posts once, and pages read them with `useContent()`. There is no mock data at runtime.
+
+Backend switch (`VITE_API_BACKEND`, set in `.env.local`, see `.env.example`):
+
+- `production` (default) — `https://geovizija.com/endpoints/api`, also from a local `npm run dev`
+- `local` — `http://127.0.0.1:8000/api` (`php artisan serve` in the backend repo)
+
 # Deployment
 
 After pushing, redeploy by opening (plain-text streamed output):
