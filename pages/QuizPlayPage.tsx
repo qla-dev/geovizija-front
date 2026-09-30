@@ -167,24 +167,24 @@ export const QuizPlayPage: React.FC = () => {
         </div>
       </div>
 
-      <div key={index} className="max-w-2xl mx-auto px-4 py-6 md:py-10 animate-fade-in">
+      <div key={index} className={`max-w-2xl mx-auto px-4 pt-6 md:py-10 animate-fade-in ${answered ? 'pb-28 md:pb-10' : 'pb-6'}`}>
         {question.topic && <p className="text-[11px] font-bold uppercase tracking-widest text-geo-green">{question.topic}</p>}
         <h1 className="font-serif font-bold text-2xl md:text-3xl text-stone-900 leading-snug mt-2">{question.question}</h1>
 
-        <div className="mt-6 flex flex-col gap-3">
+        <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-1">
           {question.options.map((option, i) => (
             <button
               key={i}
               onClick={() => choose(i)}
               disabled={answered}
-              className={`flex items-center gap-4 w-full text-left border-2 px-4 py-4 transition-all ${optionStyle(i)}`}
+              className={`flex flex-col items-start gap-3 min-h-[120px] md:min-h-0 md:flex-row md:items-center md:gap-4 w-full text-left border-2 p-3 md:px-4 md:py-4 transition-all ${optionStyle(i)}`}
             >
               <span className={`w-8 h-8 flex-shrink-0 flex items-center justify-center text-xs font-black rounded-full ${
                 answered && i === question.correctIndex ? 'bg-geo-green text-white'
                   : answered && i === chosen ? 'bg-rose-500 text-white' : 'bg-stone-100 text-stone-500'}`}>
                 {answered && i === question.correctIndex ? <Check size={16} /> : answered && i === chosen ? <X size={16} /> : LETTERS[i]}
               </span>
-              <span className="font-medium leading-snug">{option}</span>
+              <span className="font-medium leading-snug text-[15px] md:text-base">{option}</span>
             </button>
           ))}
         </div>
@@ -198,9 +198,11 @@ export const QuizPlayPage: React.FC = () => {
               {question.explanation && <p className="text-stone-700 text-sm leading-relaxed mt-1">{question.explanation}</p>}
             </div>
 
-            <button onClick={goNext} className="mt-5 w-full flex items-center justify-center gap-2 bg-stone-950 text-white py-4 font-black uppercase tracking-widest text-xs hover:bg-geo-green hover:text-stone-950 transition-colors">
+            <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 px-4 py-3 bg-stone-100/95 backdrop-blur-sm border-t border-stone-200 md:static md:p-0 md:mt-5 md:bg-transparent md:border-0 md:backdrop-blur-none">
+            <button onClick={goNext} className="w-full flex items-center justify-center gap-2 bg-stone-950 text-white py-4 font-black uppercase tracking-widest text-xs shadow-lg md:shadow-none hover:bg-geo-green hover:text-stone-950 transition-colors">
               {index < total - 1 ? <>Sljedeće pitanje <ArrowRight size={16} /></> : reviewing ? 'Nazad na rezultat' : <>Pogledaj rezultat <Trophy size={16} /></>}
             </button>
+            </div>
           </div>
         )}
       </div>
