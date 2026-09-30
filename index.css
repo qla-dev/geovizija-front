@@ -31,3 +31,21 @@ body {
 @media (min-width: 768px) {
   .pb-bottom-nav { padding-bottom: 0; }
 }
+
+/* Quiz answer flash */
+@keyframes flash-in {
+  from { opacity: 0; transform: scale(1.04); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes flash-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes flash-countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+.animate-flash-in { animation: flash-in 0.25s ease-out both; }
+.animate-flash-pop { animation: flash-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both; }
+.animate-flash-countdown { transform-origin: left; animation: flash-countdown 3s linear forwards; }

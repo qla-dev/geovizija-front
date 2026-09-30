@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { setQuizProgress } from '../services/quizProgress';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, X, Trophy, RotateCcw, Share2 } from 'lucide-react';
@@ -8,6 +9,50 @@ import { Quiz } from '../types';
 import { formatQuizDate, getQuizResult, QuizResult, saveQuizResult } from '../services/quizResults';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
+const FLASH_MS = 3000;
+
+interface FlashProps {
+  correct: boolean;
+  answer: string;
+  explanation: string | null;
+}
+
+/** Full-screen right/wrong flash with the explanation; closes after 3s or on tap. */
+const AnswerFlash: React.FC<FlashProps & { onClose: () => void }> = ({ correct, answer, explanation, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, FLASH_MS);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      onClick={onClose}
+      role="alertdialog"
+      aria-live="assertive"
+      className={`fixed inset-0 z-[110] flex flex-col items-center justify-center px-6 text-center text-white cursor-pointer animate-flash-in ${
+        correct ? 'bg-gradient-to-b from-emerald-500 to-emerald-700' : 'bg-gradient-to-b from-rose-500 to-rose-700'
+      }`}
+    >
+      <div className="w-28 h-28 rounded-full bg-white/20 ring-8 ring-white/10 flex items-center justify-center animate-flash-pop">
+        {correct ? <Check size={64} strokeWidth={3} /> : <X size={64} strokeWidth={3} />}
+      </div>
+      <p className="mt-8 font-serif font-black text-5xl">{correct ? 'Tačno!' : 'Netačno'}</p>
+      {!correct && (
+        <p className="mt-3 text-white/80 text-sm uppercase tracking-widest">
+          Tačan odgovor: <span className="text-white font-bold normal-case tracking-normal text-base">{answer}</span>
+        </p>
+      )}
+      {explanation && <p className="mt-6 max-w-md text-lg leading-relaxed text-white/95">{explanation}</p>}
+      <p className="mt-10 text-[11px] uppercase tracking-widest text-white/60">Dodirni za nastavak</p>
+
+      {/* 3s countdown */}
+      <div className="absolute inset-x-0 bottom-0 h-1.5 bg-white/20">
+        <div className="h-full bg-white animate-flash-countdown" />
+      </div>
+    </div>,
+    document.body,
+  );
+};
 
 const verdict = (score: number, total: number) => {
   const ratio = score / total;
@@ -26,6 +71,8 @@ export const QuizPlayPage: React.FC = () => {
   const [answers, setAnswers] = useState<number[]>([]);
   const [result, setResult] = useState<QuizResult | undefined>();
   const [reviewing, setReviewing] = useState(false);
+  const [flash, setFlash] = useState<FlashProps | null>(null);
+  const closeFlash = useCallback(() => setFlash(null), []);
 
   const load = () => {
     setError(null);
@@ -138,6 +185,11 @@ export const QuizPlayPage: React.FC = () => {
     const next = [...answers];
     next[index] = option;
     setAnswers(next);
+    setFlash({
+      correct: option === question.correctIndex,
+      answer: question.options[question.correctIndex],
+      explanation: question.explanation,
+    });
   };
 
   const goNext = () => {
@@ -186,14 +238,7 @@ export const QuizPlayPage: React.FC = () => {
         </div>
 
         {answered && (
-          <div className="mt-6 animate-fade-in">
-            <div className={`border-l-4 px-4 py-3 bg-white ${chosen === question.correctIndex ? 'border-geo-green' : 'border-rose-400'}`}>
-              <p className={`text-xs font-black uppercase tracking-widest ${chosen === question.correctIndex ? 'text-geo-green' : 'text-rose-500'}`}>
-                {chosen === question.correctIndex ? 'Tačno!' : 'Netačno'}
-              </p>
-              {question.explanation && <p className="text-stone-700 text-sm leading-relaxed mt-1">{question.explanation}</p>}
-            </div>
-
+          <div className="mt-6">
             <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 px-4 py-3 bg-stone-100/95 backdrop-blur-sm border-t border-stone-200 md:static md:p-0 md:mt-5 md:bg-transparent md:border-0 md:backdrop-blur-none">
             <button onClick={goNext} className="w-full flex items-center justify-center gap-2 bg-stone-950 text-white py-4 font-black uppercase tracking-widest text-xs shadow-lg md:shadow-none hover:bg-geo-green hover:text-stone-950 transition-colors">
               {index < total - 1 ? <>Sljedeće pitanje <ArrowRight size={16} /></> : reviewing ? 'Nazad na rezultat' : <>Pogledaj rezultat <Trophy size={16} /></>}
@@ -202,6 +247,8 @@ export const QuizPlayPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {flash && <AnswerFlash {...flash} onClose={closeFlash} />}
     </div>
   );
 };
