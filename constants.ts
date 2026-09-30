@@ -70,7 +70,7 @@ export const MOCK_ARTICLES: Article[] = [
     Unatoč strogim mjerama zaštite, klimatske promjene prijete i ovom netaknutom kutku. Suše i invazivne vrste polako mijenjaju strukturu šume, stoga je međunarodna suradnja na očuvanju Perućice važnija nego ikad.`,
     categoryId: CategoryId.PRIRODA,
     imageUrl: 'https://images.unsplash.com/photo-1500829243541-760591185ed7?auto=format&fit=crop&q=80', // High quality nature
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '12. Oktobar 2026',
     readTime: 5,
     featured: true
@@ -82,7 +82,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Hrvatska ima ogroman potencijal za proizvodnju zelenog vodika zahvaljujući obilju sunčeve energije i vjetra...',
     categoryId: CategoryId.TEHNOLOGIJA,
     imageUrl: 'https://picsum.photos/seed/tech1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '10. Oktobar 2026',
     readTime: 3
   },
@@ -93,7 +93,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Ruralna područja suočavaju se s depopulacijom bez presedana...',
     categoryId: CategoryId.STANOVNISTVO,
     imageUrl: 'https://picsum.photos/seed/people1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '09. Oktobar 2026',
     readTime: 7
   },
@@ -104,7 +104,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Učenici osnovne škole u Osijeku sami uzgajaju hranu za svoju kuhinju...',
     categoryId: CategoryId.SKOLSTVO,
     imageUrl: 'https://picsum.photos/seed/school1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '08. Oktobar 2026',
     readTime: 4
   },
@@ -115,7 +115,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Urbano pčelarstvo doživljava procvat na krovovima zgrada...',
     categoryId: CategoryId.ZANIMLJIVOSTI,
     imageUrl: 'https://picsum.photos/seed/bees1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '07. Oktobar 2026',
     readTime: 2
   },
@@ -126,7 +126,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Tjedan mode u Zagrebu ove je godine bio posvećen održivosti...',
     categoryId: CategoryId.KULTURA,
     imageUrl: 'https://picsum.photos/seed/fashion1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '05. Oktobar 2026',
     readTime: 6
   },
@@ -137,7 +137,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Ris je jedna od najugroženijih vrsta u Europi...',
     categoryId: CategoryId.PRIRODA,
     imageUrl: 'https://picsum.photos/seed/nature3/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '04. Oktobar 2026',
     readTime: 4
   },
@@ -148,7 +148,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Tehnologija interneta stvari (IoT) mijenja način na koji upravljamo komunalnim uslugama...',
     categoryId: CategoryId.TEHNOLOGIJA,
     imageUrl: 'https://picsum.photos/seed/city1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '03. Oktobar 2026',
     readTime: 3
   },
@@ -159,7 +159,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'U malom voćnjaku pokraj Varaždina raste preko 50 sorti jabuka koje nećete naći u supermarketima...',
     categoryId: CategoryId.PRIRODA,
     imageUrl: 'https://picsum.photos/seed/fruit1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '02. Oktobar 2026',
     readTime: 5
   },
@@ -170,7 +170,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Termitnjaci su poslužili kao inspiracija za pasivno hlađenje velikih uredskih zgrada...',
     categoryId: CategoryId.TEHNOLOGIJA,
     imageUrl: 'https://picsum.photos/seed/arch1/800/600',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '01. Oktobar 2026',
     readTime: 6
   },
@@ -181,7 +181,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Svake godine naš tim stručnjaka bira destinacije...',
     categoryId: CategoryId.PUTOVANJA,
     imageUrl: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '15. Oktobar 2026',
     readTime: 8,
     featured: true
@@ -193,7 +193,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Patagonija je divlja i nepredvidiva...',
     categoryId: CategoryId.PUTOVANJA,
     imageUrl: 'https://images.unsplash.com/photo-1518182170546-0766ba6f6a56?auto=format&fit=crop&q=80',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '14. Oktobar 2026',
     readTime: 6
   },
@@ -204,7 +204,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Dok svi hrle u Lisabon i Porto...',
     categoryId: CategoryId.PUTOVANJA,
     imageUrl: 'https://images.unsplash.com/photo-1555881400-74d7acaacd81?auto=format&fit=crop&q=80',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '13. Oktobar 2026',
     readTime: 5
   },
@@ -215,7 +215,7 @@ export const MOCK_ARTICLES: Article[] = [
     content: 'Pura Vida nije samo uzrečica...',
     categoryId: CategoryId.PUTOVANJA,
     imageUrl: 'https://images.unsplash.com/photo-1519076894081-304d776856da?auto=format&fit=crop&q=80',
-    author: 'Enisa K.',
+    author: 'Kulašin',
     date: '11. Oktobar 2026',
     readTime: 4
   }

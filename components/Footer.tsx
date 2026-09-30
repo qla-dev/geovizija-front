@@ -2,13 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Instagram, Facebook, Twitter, Youtube, Linkedin, Globe } from 'lucide-react';
 
+// First year of the copyright range; the end year is always the current one.
+const COPYRIGHT_START = 2018;
+
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-black text-white pt-16 pb-8 border-t border-stone-800 hidden md:block">
+    <footer className="bg-black text-white pt-8 pb-6 md:pt-16 md:pb-8 border-t border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Footer Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        {/* Main Footer Links Grid (desktop only; mobile shows just the bottom bar) */}
+        <div className="hidden md:grid md:grid-cols-4 gap-12 mb-16">
           
           {/* Column 1: LEGAL */}
           <div>
@@ -72,7 +75,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-stone-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="md:border-t md:border-stone-800 md:pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-2 group">
               {/* Logo shape matching Header but sized for footer */}
               <div className="w-8 h-12 border-4 border-geo-green bg-transparent group-hover:bg-geo-green/20 transition-colors"></div>
@@ -82,7 +85,7 @@ export const Footer: React.FC = () => {
           </Link>
           
           <div className="text-[10px] text-stone-500 flex flex-col md:flex-row items-center gap-1 md:gap-4">
-             <span>Copyright © 2024 Geovizija Society</span>
+             <span>Copyright © {COPYRIGHT_START}–{new Date().getFullYear()} Geovizija</span>
              <span className="hidden md:inline">|</span>
              <span>Sva prava pridržana</span>
           </div>
