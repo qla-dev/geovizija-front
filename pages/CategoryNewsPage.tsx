@@ -76,47 +76,48 @@ export const CategoryNewsPage: React.FC = () => {
          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/60"></div>
          <span className={`absolute left-0 bottom-0 h-1 w-full ${category.color}`}></span>
 
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-4 md:pt-8 pb-20 md:pb-28">
-            <nav className="flex items-center gap-2 text-white/70 text-[11px] md:text-xs font-bold uppercase tracking-widest">
-               <Link to="/" className="hover:text-white transition-colors">Naslovna</Link>
-               <span className="text-white/40">/</span>
-               <Link to="/categories" className="hover:text-white transition-colors">Kategorije</Link>
-               <span className="text-white/40">/</span>
-               <span className="text-white truncate">{category.name}</span>
-            </nav>
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-4 md:pt-8 pb-8 md:pb-14">
+            <div className="flex items-center justify-between gap-3">
+               <nav className="flex items-center gap-2 min-w-0 text-white/70 text-[11px] md:text-xs font-bold uppercase tracking-widest">
+                  <Link to="/" className="hover:text-white transition-colors">Naslovna</Link>
+                  <span className="text-white/40">/</span>
+                  <Link to="/categories" className="hover:text-white transition-colors">Kategorije</Link>
+                  <span className="text-white/40">/</span>
+                  <span className="text-white truncate">{category.name}</span>
+               </nav>
+
+               {/* Compact view switch */}
+               <div className="flex flex-shrink-0 p-0.5 bg-black/30 backdrop-blur-sm border border-white/20 rounded-full" role="group" aria-label="Prikaz">
+                  {([['list', 'Lista', List], ['grid', 'Mreža', Grid]] as const).map(([mode, label, Icon]) => (
+                    <button
+                      key={mode}
+                      onClick={() => setViewMode(mode)}
+                      aria-pressed={viewMode === mode}
+                      aria-label={label}
+                      title={label}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                        viewMode === mode ? 'bg-white text-stone-900' : 'text-white/70 hover:text-white'
+                      }`}
+                    >
+                      <Icon size={15} />
+                    </button>
+                  ))}
+               </div>
+            </div>
             <h1 className="mt-20 md:mt-32 text-5xl md:text-8xl font-serif font-black mb-4 md:mb-6 drop-shadow-lg tracking-tight leading-none">
               {category.name}
             </h1>
             <p className="text-lg md:text-2xl font-serif text-white/85 max-w-2xl leading-relaxed drop-shadow-md">
               Najnovije vijesti, analize i reportaže iz svijeta {category.name.toLowerCase()}.
             </p>
+            <p className="mt-4 text-[11px] md:text-xs font-bold uppercase tracking-widest text-white/60">
+               <span className="text-white">{articles.length}</span> {articlesWord(articles.length)}
+               {totalPages > 1 && <> · stranica {currentPage}/{totalPages}</>}
+            </p>
          </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
-         {/* Controls Bar: stacked with a full-width switch on mobile, one row on desktop */}
-         <div className="bg-white p-3 md:p-4 shadow-lg flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6 md:mb-8 border border-stone-200">
-            <div className="text-stone-500 font-medium text-xs md:text-sm uppercase md:normal-case tracking-widest md:tracking-normal px-1">
-               <span className="text-stone-900 font-bold">{articles.length}</span> {articlesWord(articles.length)}
-               {totalPages > 1 && <span className="text-stone-400"> · stranica {currentPage}/{totalPages}</span>}
-            </div>
-
-            <div className="grid grid-cols-2 w-full md:w-auto md:inline-grid bg-stone-100 p-1 gap-1" role="group" aria-label="Prikaz">
-               {([['list', 'Lista', List], ['grid', 'Mreža', Grid]] as const).map(([mode, label, Icon]) => (
-                 <button
-                   key={mode}
-                   onClick={() => setViewMode(mode)}
-                   aria-pressed={viewMode === mode}
-                   className={`flex items-center justify-center gap-2 py-2.5 md:py-2 md:px-4 text-xs font-bold uppercase tracking-widest transition-colors ${
-                     viewMode === mode ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-900'
-                   }`}
-                 >
-                   <Icon size={16} className={viewMode === mode ? 'text-geo-green' : ''} /> {label}
-                 </button>
-               ))}
-            </div>
-         </div>
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-10">
          {/* Articles Content */}
          {articles.length === 0 ? (
              <div className="bg-white p-16 text-center border border-stone-200 shadow-sm">
