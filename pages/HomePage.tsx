@@ -124,7 +124,7 @@ export const HomePage: React.FC = () => {
            </div>
            
            {/* Navigation Arrows - Moved to Top Right */}
-           <div className="absolute top-8 right-8 z-30 flex gap-2">
+           <div className="absolute top-4 right-4 md:top-8 md:right-8 z-30 flex gap-2">
               <button 
                  onClick={() => setCurrentHeroIndex((prev) => (prev === 0 ? heroArticles.length - 1 : prev - 1))}
                  className="p-3 bg-black/40 text-white hover:bg-geo-green hover:text-stone-900 transition-colors border border-white/20 backdrop-blur-sm"
@@ -141,7 +141,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Sidebar News */}
-        <div className="lg:col-span-1 bg-white p-6 md:p-8 flex flex-col h-full border-l border-stone-200">
+        <div className="lg:col-span-1 bg-white px-4 py-6 md:p-8 flex flex-col h-full border-l border-stone-200">
           <div className="flex items-center justify-between mb-6 border-b-2 border-geo-green pb-2">
             <h4 className="font-serif font-black text-stone-900 uppercase tracking-widest text-sm">
               Najnovije

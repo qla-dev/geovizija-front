@@ -21,7 +21,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent opacity-90" />
-        <div className="absolute bottom-0 left-0 p-6 md:p-10">
+        <div className="absolute bottom-0 left-0 px-4 py-6 md:p-10">
           <CategoryPill id={article.categoryId} className="mb-3" />
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-white leading-tight mb-2 drop-shadow-md">
             {article.title}
