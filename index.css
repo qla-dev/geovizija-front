@@ -20,3 +20,14 @@ body {
 .animate-progress {
   animation: progress 6s linear;
 }
+/* Mobile bottom nav: 4rem tall plus the iPhone home-indicator inset.
+   Content padding uses the same sum so nothing is hidden and no gap is left. */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pb-bottom-nav {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .pb-bottom-nav { padding-bottom: 0; }
+}
