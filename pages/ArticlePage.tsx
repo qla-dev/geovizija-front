@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
@@ -25,11 +25,14 @@ export const ArticlePage: React.FC = () => {
     .filter(a => a.id !== id) // Exclude current
     .slice(0, 4); // Take 4
 
-  // Filter suggested articles for bottom grid (Random 6 for demo)
-  const suggestedArticles = allArticles
+  // Suggested articles for the bottom grid: 6 random others, shuffled once per article
+  // (not on every render, which reshuffled them while typing a comment)
+  const suggestedArticles = useMemo(() => allArticles
     .filter(a => a.id !== id)
-    .sort(() => 0.5 - Math.random()) // Simple shuffle
-    .slice(0, 6);
+    .map(a => ({ a, key: Math.random() }))
+    .sort((x, y) => x.key - y.key)
+    .map(({ a }) => a)
+    .slice(0, 6), [allArticles, id]);
 
   if (!article) {
     return (
@@ -57,7 +60,7 @@ export const ArticlePage: React.FC = () => {
   const categoryName = allCategories.find(c => c.id === article.categoryId)?.name || 'Vijesti';
 
   return (
-    <article className="animate-fade-in bg-white min-h-screen pb-20">
+    <article className="animate-fade-in bg-white min-h-screen md:pb-20">
       <SEO 
         title={`${article.title} | Geovizija`}
         description={article.excerpt}
@@ -117,7 +120,7 @@ export const ArticlePage: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-8 md:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* LEFT COLUMN: ARTICLE CONTENT */}
@@ -219,13 +222,13 @@ export const ArticlePage: React.FC = () => {
             </div>
 
             {/* SUGGESTED ARTICLES ("Možda vas zanima") */}
-            <div className="mt-16 pt-8 border-t border-stone-200">
-                <div className="flex items-center justify-between mb-6">
+            <div className="mt-10 md:mt-16 pt-8 border-t border-stone-200">
+                <div className="flex items-center justify-between mb-5 md:mb-6">
                     <h3 className="text-xl font-bold text-stone-800">Možda vas zanima</h3>
                     <MousePointerClick size={20} className="text-stone-400" />
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-10">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-6 md:gap-x-6 md:gap-y-10">
                     {suggestedArticles.map(article => (
                         <Link to={`/article/${article.id}`} key={article.id} className="group block">
                             <div className="aspect-[3/2] w-full overflow-hidden bg-stone-200 mb-3 relative">
@@ -237,13 +240,13 @@ export const ArticlePage: React.FC = () => {
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-1.5 line-clamp-1">
-                                    {['EKSKLUZIVNO', 'NAJNOVIJE', 'PREPORUKA', 'INTERVJU', 'REPORTAŽA'][Math.floor(Math.random()*5)]}
+                                    {allCategories.find(c => c.id === article.categoryId)?.name}
                                 </span>
                                 <h4 className="font-serif font-bold text-stone-900 text-sm leading-snug group-hover:text-geo-green transition-colors mb-2 line-clamp-3">
                                     {article.title}
                                 </h4>
                                 <span className="text-[10px] text-stone-400">
-                                    {Math.floor(Math.random() * 12) + 1} sata
+                                    {article.date}
                                 </span>
                             </div>
                         </Link>
