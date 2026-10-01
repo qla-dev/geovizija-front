@@ -54,7 +54,7 @@ export const PublishPage: React.FC = () => {
         <p className="text-geo-green text-xs font-bold uppercase tracking-[0.25em]">Uredništvo</p>
         <h1 className="font-serif font-black text-3xl md:text-4xl text-stone-900 mt-2">Objavi sadržaj</h1>
         <p className="text-stone-500 text-sm mt-2 leading-relaxed">
-          Zalijepite JSON članka ili kviza koji je napisao Claude. Mora sadržavati ispravan <code className="bg-stone-200 px-1">"secret"</code>. Članak se objavljuje odmah; slike se generišu i to traje oko minut.
+          Zalijepite JSON članka ili kviza koji je napisao Claude. Mora sadržavati ispravan <code className="bg-stone-200 px-1">"secret"</code>. Članak se objavljuje odmah; slike se generišu i to traje oko minut. Sa <code className="bg-stone-200 px-1">"id"</code> postojećeg članka mijenjaju se samo poslana polja (tekst, naslovna slika, slike u tekstu).
         </p>
 
         <textarea
