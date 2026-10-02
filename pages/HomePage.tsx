@@ -162,12 +162,12 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <AdSlot className="bg-stone-100 px-4 py-16 md:py-24" />
+      <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
 
       {/* --- NEW SECTION: MORE FROM GEOVIZIJA (SLIDER) --- */}
-      <section className="bg-black text-white py-16 md:py-24 border-t border-stone-800 overflow-hidden">
+      <section className="bg-black text-white py-8 md:py-12 border-t border-stone-800 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-xs md:text-sm tracking-[0.2em] uppercase text-stone-100">
                     Više sa Geovizije
                 </h3>
@@ -245,7 +245,7 @@ export const HomePage: React.FC = () => {
          />
          <div className="absolute inset-0 bg-stone-900/30"></div>
          
-         <div className="relative z-10 w-full bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent pt-32 pb-16 md:pb-24">
+         <div className="relative z-10 w-full bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent pt-24 pb-8 md:pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-end justify-between gap-8">
                <div className="max-w-2xl">
                   <div className="flex items-center gap-2 text-white/80 mb-4">
@@ -271,11 +271,11 @@ export const HomePage: React.FC = () => {
          </div>
       </section>
 
-      <AdSlot className="bg-stone-100 px-4 py-16 md:py-24" />
+      <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
 
       {/* --- SECTION 3: TECHNOLOGY SPOTLIGHT (White BG) --- */}
-      <section className="pb-16 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10 pb-4 border-b border-stone-300">
+      <section className="py-8 md:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-6 pb-4 border-b border-stone-300">
              <div>
                <span className="text-geo-green font-bold uppercase tracking-widest text-xs mb-2 block">Inovacije</span>
                <h2 className="text-4xl font-serif font-black text-stone-900">Tehnologija i Budućnost</h2>
@@ -315,9 +315,9 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- SECTION 4: IN FOCUS (dark) --- */}
-      <section className="bg-stone-950 text-white py-16 md:py-24 border-t border-stone-900">
+      <section className="bg-stone-950 text-white py-8 md:py-12 border-t border-stone-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl md:text-4xl font-serif font-bold flex items-center gap-3">
               <span className="w-5 h-8 border-[3px] border-geo-green flex-shrink-0" aria-hidden="true" />
               U <span className="text-geo-green">fokusu</span>
@@ -365,12 +365,12 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- SECTION 5: NATURE & FACTS --- */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24">
-         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-12">
+         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Left Content (8 cols) */}
             <div className="lg:col-span-8">
-               <h3 className="text-2xl font-serif font-black text-stone-900 mb-8 pb-2 border-b border-stone-200">
+               <h3 className="text-2xl font-serif font-black text-stone-900 mb-6 pb-2 border-b border-stone-200">
                   Priče iz prirode
                </h3>
                <div className="space-y-8">
@@ -428,10 +428,10 @@ export const HomePage: React.FC = () => {
          </div>
       </div>
 
-      <AdSlot className="bg-stone-100 px-4 py-16 md:py-24" />
+      <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
 
       {/* --- NEW SECTION: PUTOVANJA (TRAVEL) --- */}
-      <section className="relative bg-stone-950 text-white overflow-hidden py-16 md:py-24">
+      <section className="relative bg-stone-950 text-white overflow-hidden py-8 md:py-12">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
              <img 
@@ -444,7 +444,7 @@ export const HomePage: React.FC = () => {
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Title centered with line accent */}
-              <div className="flex flex-col items-center mb-12">
+              <div className="flex flex-col items-center mb-6">
                  <h2 className="text-4xl md:text-5xl font-serif font-black tracking-wide uppercase mb-4 text-center">
                     Putovanja
                  </h2>
@@ -519,7 +519,7 @@ export const HomePage: React.FC = () => {
               </div>
 
               {/* Bottom Row of Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-12 border-t border-stone-800">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-stone-800">
                  
                  <div className="bg-white text-stone-900 p-8 flex flex-col items-center text-center">
                     <MapPin size={32} className="text-geo-green mb-4" />
@@ -551,13 +551,13 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- NEWSLETTER --- */}
-      <div id="newsletter" className="bg-stone-900 py-16 md:py-24 border-t border-stone-800">
+      <div id="newsletter" className="bg-stone-900 py-8 md:py-12 border-t border-stone-800">
          <div className="max-w-4xl mx-auto px-4 text-center">
             <span className="text-geo-green font-bold uppercase tracking-widest text-xs mb-4 block">Newsletter</span>
             <h2 className="text-3xl md:text-5xl font-serif font-black text-white mb-6">
                Pratite Zelenu Revoluciju
             </h2>
-            <p className="text-stone-400 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-stone-400 text-lg mb-6 max-w-2xl mx-auto leading-relaxed">
                Prijavite se na naš tjedni pregled najvažnijih ekoloških vijesti, znanstvenih otkrića i inspirativnih priča. Bez spama, samo priroda.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">

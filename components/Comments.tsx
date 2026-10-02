@@ -72,7 +72,7 @@ const CommentForm: React.FC<{
   };
 
   return (
-    <form onSubmit={submit} className={compact ? 'mt-4' : 'mb-12'}>
+    <form onSubmit={submit} className={compact ? 'mt-4' : 'mb-8'}>
       <input
         value={author}
         onChange={(e) => onAuthorChange(e.target.value)}
@@ -233,7 +233,7 @@ export const Comments: React.FC<{ postId: string }> = ({ postId }) => {
   );
 
   return (
-    <div className="mt-16">
+    <div className="mt-8">
       <div className="flex items-center gap-3 mb-8">
         <MessageSquare size={24} className="text-geo-green" />
         <h3 className="font-serif font-bold text-2xl text-stone-900">

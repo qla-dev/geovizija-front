@@ -7,11 +7,11 @@ const COPYRIGHT_START = 2018;
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-black text-white pt-16 md:pt-24 pb-footer border-t border-stone-800">
+    <footer className="bg-black text-white pt-8 md:pt-12 pb-footer border-t border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Main Footer Links Grid (desktop only; mobile shows just the bottom bar) */}
-        <div className="hidden md:grid md:grid-cols-4 gap-12 mb-16">
+        <div className="hidden md:grid md:grid-cols-4 gap-8 mb-8">
           
           {/* Column 1: LEGAL */}
           <div>

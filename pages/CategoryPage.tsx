@@ -46,7 +46,7 @@ export const CategoryPage: React.FC = () => {
 
       {/* Header */}
       <header className="bg-stone-950 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <p className="text-geo-green text-xs font-bold uppercase tracking-[0.25em] mb-3">Istraži Geoviziju</p>
           <h1 className="font-serif font-black text-4xl md:text-6xl leading-none mb-4">Kategorije</h1>
           <p className="text-stone-400 max-w-xl text-sm md:text-base leading-relaxed">
@@ -90,7 +90,7 @@ export const CategoryPage: React.FC = () => {
       </div>
 
       {/* Desktop: featured tile + photo grid */}
-      <div className="hidden md:block max-w-7xl mx-auto px-6 lg:px-8 py-16 md:py-24">
+      <div className="hidden md:block max-w-7xl mx-auto px-6 lg:px-8 py-8 md:py-12">
         <div className="grid grid-cols-3 gap-6">
           {featured && <CategoryTile entry={featured} large />}
           {rest.map((entry, i) => (

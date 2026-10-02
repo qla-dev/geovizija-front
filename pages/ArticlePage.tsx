@@ -108,7 +108,7 @@ export const ArticlePage: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 md:pt-8 md:pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-8 md:pt-8 md:pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* LEFT COLUMN: ARTICLE CONTENT */}
@@ -171,7 +171,7 @@ export const ArticlePage: React.FC = () => {
             <Comments postId={article.id} />
 
             {/* SUGGESTED ARTICLES ("Možda vas zanima") */}
-            <div className="mt-10 md:mt-16 pt-8 border-t border-stone-200">
+            <div className="mt-8 pt-8 border-t border-stone-200">
                 <div className="flex items-center justify-between mb-5 md:mb-6">
                     <h3 className="text-xl font-bold text-stone-800">Možda vas zanima</h3>
                     <MousePointerClick size={20} className="text-stone-400" />
