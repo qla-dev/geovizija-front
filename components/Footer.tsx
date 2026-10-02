@@ -1,74 +1,45 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram, Facebook, Twitter, Youtube, Linkedin, Globe } from 'lucide-react';
+import { Instagram, Facebook } from 'lucide-react';
+import { useContent } from './ContentProvider';
 
 // First year of the copyright range; the end year is always the current one.
 const COPYRIGHT_START = 2018;
 
 export const Footer: React.FC = () => {
+  const { categories } = useContent();
   return (
     <footer className="bg-black text-white pt-8 md:pt-12 pb-footer border-t border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Footer Links Grid (desktop only; mobile shows just the bottom bar) */}
-        <div className="hidden md:grid md:grid-cols-4 gap-8 mb-8">
-          
-          {/* Column 1: LEGAL */}
+        {/* Main Footer Links Grid (desktop only; mobile shows just the bottom bar). Only links that lead somewhere. */}
+        <div className="hidden md:grid md:grid-cols-3 gap-8 mb-8">
+
           <div>
-            <h4 className="uppercase text-[10px] font-bold tracking-[0.2em] mb-6 text-stone-100">Pravno</h4>
+            <h4 className="uppercase text-[10px] font-bold tracking-[0.2em] mb-6 text-stone-100">Kategorije</h4>
             <ul className="space-y-3">
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Uvjeti korištenja</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Politika privatnosti</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">EU prava privatnosti</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Postavke kolačića</Link></li>
+              {categories.map(category => (
+                <li key={category.id}><Link to={`/category/${category.id}`} className="text-xs text-stone-400 hover:text-white transition-colors">{category.name}</Link></li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 2: OUR SITES */}
           <div>
-            <h4 className="uppercase text-[10px] font-bold tracking-[0.2em] mb-6 text-stone-100">Naš Portal</h4>
+            <h4 className="uppercase text-[10px] font-bold tracking-[0.2em] mb-6 text-stone-100">Naš portal</h4>
             <ul className="space-y-3">
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Geovizija Naslovnica</Link></li>
-              <li><Link to="/categories" className="text-xs text-stone-400 hover:text-white transition-colors">Kategorije</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Događanja uživo</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Interaktivne karte</Link></li>
+              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Naslovna</Link></li>
+              <li><Link to="/categories" className="text-xs text-stone-400 hover:text-white transition-colors">Sve kategorije</Link></li>
+              <li><Link to="/quiz" className="text-xs text-stone-400 hover:text-white transition-colors">Kviz dana</Link></li>
               <li><Link to="/category/skolstvo" className="text-xs text-stone-400 hover:text-white transition-colors">Za djecu i škole</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Geovizija TV</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">O nama</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Podrži našu misiju</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Press centar</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Oglašavanje</Link></li>
+              <li><a href="/#newsletter" className="text-xs text-stone-400 hover:text-white transition-colors">Newsletter</a></li>
             </ul>
           </div>
 
-          {/* Column 3: JOIN US */}
-          <div>
-            <h4 className="uppercase text-[10px] font-bold tracking-[0.2em] mb-6 text-stone-100">Pridruži se</h4>
-            <ul className="space-y-3">
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Pretplati se</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Korisnička podrška</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Obnovi pretplatu</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Upravljanje računom</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Karijere</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Newsletter</Link></li>
-              <li><Link to="/" className="text-xs text-stone-400 hover:text-white transition-colors">Donacije za prirodu</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 4: FOLLOW US */}
           <div>
             <h4 className="uppercase text-[10px] font-bold tracking-[0.2em] mb-6 text-stone-100">Pratite nas</h4>
-            <div className="flex gap-4 mb-6">
-              <a href="#" className="text-stone-400 hover:text-white transition-colors"><Instagram size={18} /></a>
-              <a href="#" className="text-stone-400 hover:text-white transition-colors"><Facebook size={18} /></a>
-              <a href="#" className="text-stone-400 hover:text-white transition-colors"><Twitter size={18} /></a>
-              <a href="#" className="text-stone-400 hover:text-white transition-colors"><Youtube size={18} /></a>
-              <a href="#" className="text-stone-400 hover:text-white transition-colors"><Linkedin size={18} /></a>
-            </div>
-            
-            <div className="flex items-center gap-2 text-xs text-stone-400 hover:text-white cursor-pointer transition-colors">
-              <Globe size={14} />
-              <span>Hrvatska (Promijeni)</span>
+            <div className="flex gap-4">
+              <a href="https://www.instagram.com/geovizija/" target="_blank" rel="noopener" aria-label="Instagram" className="text-stone-400 hover:text-white transition-colors"><Instagram size={18} /></a>
+              <a href="https://www.facebook.com/profile.php?id=61594932783634" target="_blank" rel="noopener" aria-label="Facebook" className="text-stone-400 hover:text-white transition-colors"><Facebook size={18} /></a>
             </div>
           </div>
 

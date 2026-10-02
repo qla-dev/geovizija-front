@@ -1,14 +1,21 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Grid, Compass, Brain, User } from 'lucide-react';
+import { Home, Grid, Compass, Brain, Mail } from 'lucide-react';
 import { openSearch } from './SearchOverlay';
+
+// Scrolls to an element once the (possibly new) page has rendered it.
+const scrollToId = (id: string, tries = 0) => {
+  const target = document.getElementById(id);
+  if (target) target.scrollIntoView({ behavior: 'smooth' });
+  else if (tries < 20) setTimeout(() => scrollToId(id, tries + 1), 50);
+};
 
 export const BottomNav: React.FC = () => {
   const navItems = [
     { to: '/', icon: Home, label: 'Naslovna' },
     { to: '/categories', icon: Grid, label: 'Kategorije' },
     { to: '/quiz', icon: Brain, label: 'Kviz' },
-    { to: '/profile', icon: User, label: 'Profil' }, // Placeholder
+    { to: '/', hash: 'newsletter', icon: Mail, label: 'Newsletter' }, // the subscription box at the end of the home page
   ];
 
   return (
@@ -35,10 +42,12 @@ export const BottomNav: React.FC = () => {
         {navItems.slice(2).map((item) => (
           <NavLink
             key={item.label}
-            to={item.to}
+            to={item.hash ? { pathname: item.to, hash: item.hash } : item.to}
+            end={!!item.hash}
+            onClick={item.hash ? () => scrollToId(item.hash!) : undefined}
             className={({ isActive }) => `
               flex flex-col items-center justify-center w-full h-full space-y-1
-              ${isActive ? 'text-geo-green' : 'text-stone-500 hover:text-stone-300'}
+              ${isActive && !item.hash ? 'text-geo-green' : 'text-stone-500 hover:text-stone-300'}
             `}
           >
             <item.icon size={20} strokeWidth={2} />

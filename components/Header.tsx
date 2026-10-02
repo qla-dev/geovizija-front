@@ -204,9 +204,6 @@ export const Header: React.FC = () => {
                 </div>
              </div>
 
-             <Link to="/profile" className={`hidden lg:block ${d.text} ${d.tracking} font-bold uppercase text-stone-300 hover:text-white transition-colors whitespace-nowrap`}>
-               Prijava
-             </Link>
 
              <button
                onClick={goToNewsletter}

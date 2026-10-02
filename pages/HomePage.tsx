@@ -65,7 +65,14 @@ export const HomePage: React.FC = () => {
 
   // Multimedia section
   const focusArticle = pick(8);
-  const photoOfDayUrl = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2674&auto=format&fit=crop";
+  // "Prizor dana": the newest nature story (its cover, title and intro), else any article.
+  const photoArticle = natureArticles[0] ?? pick(3);
+  // "Uredništvo preporučuje": three older stories not shown elsewhere on top.
+  const recommended = [pick(14), pick(15), pick(16)].filter(Boolean);
+  const categoryName = (id: string) => allCategories.find(c => c.id === id)?.name ?? '';
+  // Bottom cards of the travel section: the quiz (with a story's photo) and the newest curiosity.
+  const quizArticle = pick(17);
+  const factArticle = allArticles.find(a => a.categoryId === 'zanimljivosti') ?? pick(18);
 
   // Slider Logic (Bottom Section)
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -237,14 +244,15 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- SECTION 2: PHOTO OF THE DAY --- */}
+      {photoArticle && (
       <section className="relative h-[80vh] w-full overflow-hidden flex items-end">
-         <img 
-            src={photoOfDayUrl} 
-            alt="Prizor dana" 
+         <img
+            src={photoArticle.imageUrl}
+            alt={photoArticle.title}
             className="absolute inset-0 w-full h-full object-cover"
          />
          <div className="absolute inset-0 bg-stone-900/30"></div>
-         
+
          <div className="relative z-10 w-full bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent pt-24 pb-8 md:pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-end justify-between gap-8">
                <div className="max-w-2xl">
@@ -253,23 +261,24 @@ export const HomePage: React.FC = () => {
                      <span className="text-sm font-bold uppercase tracking-widest">Prizor Dana</span>
                   </div>
                   <h2 className="text-4xl md:text-6xl font-serif font-bold text-white leading-none mb-4">
-                     Magla nad Velebitom
+                     {photoArticle.title}
                   </h2>
-                  <p className="text-lg text-stone-300 font-serif italic">
-                     "Jutarnja tišina koju prekida samo zvuk vjetra u krošnjama, podsjetnik na divlju ljepotu koja nas okružuje."
+                  <p className="text-lg text-stone-300 font-serif italic line-clamp-3">
+                     {photoArticle.excerpt}
                   </p>
                </div>
                <div className="flex gap-4">
-                   <button className="bg-transparent border border-white text-white hover:bg-white hover:text-stone-900 px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all">
-                      Preuzmi pozadinu
-                   </button>
-                   <button className="bg-geo-green text-stone-950 hover:bg-white px-6 py-3 text-sm font-bold uppercase tracking-wider transition-colors">
-                      Vidi galeriju
-                   </button>
+                   <a href={photoArticle.imageUrl} target="_blank" rel="noopener" className="bg-transparent border border-white text-white hover:bg-white hover:text-stone-900 px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all">
+                      Otvori fotografiju
+                   </a>
+                   <Link to={`/article/${photoArticle.slug}`} className="bg-geo-green text-stone-950 hover:bg-white px-6 py-3 text-sm font-bold uppercase tracking-wider transition-colors">
+                      Pročitaj priču
+                   </Link>
                </div>
             </div>
          </div>
       </section>
+      )}
 
       <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
 
@@ -296,7 +305,7 @@ export const HomePage: React.FC = () => {
              </div>
 
              {/* Right Side: Big Feature */}
-             <div className="lg:col-span-2 relative group cursor-pointer h-full min-h-[500px] lg:min-h-0">
+             <Link to={`/article/${bigTechArticle?.slug}`} className="lg:col-span-2 relative group block h-full min-h-[500px] lg:min-h-0">
                 <div className="h-full w-full overflow-hidden relative bg-stone-200">
                    <img 
                      src={bigTechArticle?.imageUrl} 
@@ -310,7 +319,7 @@ export const HomePage: React.FC = () => {
                       <p className="text-stone-300 line-clamp-3 text-lg leading-relaxed">{bigTechArticle?.excerpt}</p>
                    </div>
                 </div>
-             </div>
+             </Link>
           </div>
       </section>
 
@@ -375,12 +384,12 @@ export const HomePage: React.FC = () => {
                </h3>
                <div className="space-y-8">
                   {natureArticles.map((article) => (
-                    <div key={article.id} className="flex flex-col md:flex-row gap-6 group cursor-pointer">
+                    <Link key={article.id} to={`/article/${article.slug}`} className="flex flex-col md:flex-row gap-6 group">
                        <div className="w-full md:w-64 h-48 overflow-hidden bg-stone-200 flex-shrink-0">
-                          <img src={article.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                          <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                        </div>
                        <div className="flex-1 py-2">
-                          <span className="text-geo-green text-xs font-bold uppercase tracking-wider mb-2 block">Ekologija</span>
+                          <span className="text-geo-green text-xs font-bold uppercase tracking-wider mb-2 block">{categoryName(article.categoryId)}</span>
                           <h4 className="text-xl md:text-2xl font-serif font-bold text-stone-900 mb-3 group-hover:text-geo-green transition-colors">
                              {article.title}
                           </h4>
@@ -391,7 +400,7 @@ export const HomePage: React.FC = () => {
                              {article.author} • {article.readTime} min
                           </div>
                        </div>
-                    </div>
+                    </Link>
                   ))}
                </div>
             </div>
@@ -405,20 +414,22 @@ export const HomePage: React.FC = () => {
                   <p className="font-serif text-lg leading-relaxed mb-6 relative z-10">
                      Jedno zrelo stablo može apsorbirati do 22 kilograma ugljičnog dioksida godišnje i proizvesti dovoljno kisika za dvije osobe.
                   </p>
-                  <button className="text-xs font-black uppercase tracking-widest border-b-2 border-stone-900 pb-1 hover:text-white hover:border-white transition-colors">
+                  <Link to="/category/zanimljivosti" className="text-xs font-black uppercase tracking-widest border-b-2 border-stone-900 pb-1 hover:text-white hover:border-white transition-colors">
                      Još činjenica
-                  </button>
+                  </Link>
                </div>
 
                <div className="border border-stone-200 p-6">
                   <h4 className="font-bold text-sm uppercase tracking-widest text-stone-400 mb-6">Uredništvo preporučuje</h4>
                   <ul className="space-y-4">
-                     {[1, 2, 3].map((i) => (
-                        <li key={i} className="flex gap-4 items-start group cursor-pointer">
-                           <span className="text-3xl font-serif font-bold text-stone-200 group-hover:text-geo-green transition-colors">{i}</span>
-                           <p className="text-stone-700 font-medium text-sm leading-snug group-hover:underline decoration-geo-green underline-offset-4">
-                              Kako male promjene u kućanstvu mogu spasiti planet?
-                           </p>
+                     {recommended.map((article, i) => (
+                        <li key={article.id}>
+                           <Link to={`/article/${article.slug}`} className="flex gap-4 items-start group">
+                              <span className="text-3xl font-serif font-bold text-stone-200 group-hover:text-geo-green transition-colors">{i + 1}</span>
+                              <p className="text-stone-700 font-medium text-sm leading-snug group-hover:underline decoration-geo-green underline-offset-4">
+                                 {article.title}
+                              </p>
+                           </Link>
                         </li>
                      ))}
                   </ul>
@@ -434,11 +445,13 @@ export const HomePage: React.FC = () => {
       <section className="relative bg-stone-950 text-white overflow-hidden py-8 md:py-12">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
-             <img 
-               src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80" 
-               alt="Travel Background" 
-               className="w-full h-full object-cover opacity-40" 
-             />
+             {(travelArticles[1] ?? travelArticles[0]) && (
+               <img
+                 src={(travelArticles[1] ?? travelArticles[0]).imageUrl}
+                 alt=""
+                 className="w-full h-full object-cover opacity-40"
+               />
+             )}
              <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/80 to-transparent"></div>
           </div>
 
@@ -454,7 +467,7 @@ export const HomePage: React.FC = () => {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                  
                  {/* Main Feature (8 cols) - Dynamic Height based on content */}
-                 <div className="lg:col-span-8 group relative cursor-pointer min-h-[400px] lg:min-h-0 h-full">
+                 <div className="lg:col-span-8 group relative min-h-[400px] lg:min-h-0 h-full">
                     {travelArticles[0] && (
                       <Link to={`/article/${travelArticles[0].slug}`} className="block h-full relative overflow-hidden bg-stone-900">
                          <img 
@@ -501,7 +514,7 @@ export const HomePage: React.FC = () => {
                                 </div>
                                 <div>
                                    <span className="text-[10px] font-bold text-geo-green uppercase tracking-wider block mb-1">
-                                      Putovanja
+                                      {categoryName(article.categoryId)}
                                    </span>
                                    <h4 className="font-serif text-sm font-bold text-stone-200 leading-snug group-hover:text-white group-hover:underline decoration-geo-green underline-offset-4">
                                       {article.title}
@@ -521,30 +534,36 @@ export const HomePage: React.FC = () => {
               {/* Bottom Row of Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-stone-800">
                  
-                 <div className="bg-white text-stone-900 p-8 flex flex-col items-center text-center">
+                 <Link to="/category/priroda" className="bg-white text-stone-900 p-8 flex flex-col items-center text-center group">
                     <MapPin size={32} className="text-geo-green mb-4" />
                     <h4 className="font-serif text-xl font-bold mb-2">Istraži prirodu</h4>
-                    <p className="text-sm text-stone-600 mb-4">Pronađi skrivene parkove i rezervate u svojoj blizini.</p>
-                    <button className="text-xs font-black uppercase tracking-widest border-b-2 border-stone-900 hover:text-geo-green hover:border-geo-green transition-colors pb-1">
+                    <p className="text-sm text-stone-600 mb-4">Parkovi, rijeke, planine i divlji svijet Balkana.</p>
+                    <span className="text-xs font-black uppercase tracking-widest border-b-2 border-stone-900 group-hover:text-geo-green group-hover:border-geo-green transition-colors pb-1">
                        Kreni
-                    </button>
-                 </div>
+                    </span>
+                 </Link>
 
-                 <div className="relative h-64 md:h-auto overflow-hidden group">
-                     <img src="https://images.unsplash.com/photo-1542259659-4ab2825c9325?auto=format&fit=crop&q=80" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                 {quizArticle && (
+                 <Link to="/quiz" className="relative h-64 md:h-auto min-h-[16rem] overflow-hidden group">
+                     <img src={quizArticle.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex flex-col justify-end p-6">
-                        <span className="bg-geo-green text-stone-900 text-[10px] font-bold px-2 py-1 uppercase tracking-wider inline-block w-max mb-2">Partneri</span>
-                        <h4 className="text-white font-serif text-lg font-bold">Ekspedicije s biolozima</h4>
+                        <span className="bg-geo-green text-stone-900 text-[10px] font-bold px-2 py-1 uppercase tracking-wider inline-block w-max mb-2">Kviz</span>
+                        <h4 className="text-white font-serif text-lg font-bold">Kviz dana: koliko znaš o svijetu?</h4>
+                        <span className="text-geo-green text-xs font-bold uppercase tracking-widest mt-2 group-hover:text-white transition-colors">Igraj &rarr;</span>
                      </div>
-                 </div>
+                 </Link>
+                 )}
 
-                 <div className="relative h-64 md:h-auto overflow-hidden group">
-                     <img src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&q=80" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                 {factArticle && (
+                 <Link to={`/article/${factArticle.slug}`} className="relative h-64 md:h-auto min-h-[16rem] overflow-hidden group">
+                     <img src={factArticle.imageUrl} alt={factArticle.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex flex-col justify-end p-6">
-                        <h4 className="text-white font-serif text-lg font-bold">Foto natječaj 2026.</h4>
-                        <Link to="/" className="text-geo-green text-xs font-bold uppercase tracking-widest mt-2 hover:text-white transition-colors">Prijavi se &rarr;</Link>
+                        <span className="bg-geo-green text-stone-900 text-[10px] font-bold px-2 py-1 uppercase tracking-wider inline-block w-max mb-2">{categoryName(factArticle.categoryId)}</span>
+                        <h4 className="text-white font-serif text-lg font-bold">{factArticle.title}</h4>
+                        <span className="text-geo-green text-xs font-bold uppercase tracking-widest mt-2 group-hover:text-white transition-colors">Pročitaj &rarr;</span>
                      </div>
-                 </div>
+                 </Link>
+                 )}
 
               </div>
           </div>
