@@ -14,6 +14,12 @@ DirectoryIndex dist/index.html
     # Let the Laravel application's own .htaccess handle API requests (backend lives in ./endpoints).
     RewriteRule ^endpoints(?:/|$) - [L]
 
+    # Link previews: crawlers asking for an article or category get og.php (page-specific
+    # Open Graph tags); everyone else gets the app below.
+    RewriteRule ^og\.php$ - [L]
+    RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|facebot|meta-externalagent|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|pinterest|skypeuripreview|viber|applebot|googlebot|bingbot) [NC]
+    RewriteRule ^(article|category)/([a-z0-9-]+)/?$ og.php?type=$1&slug=$2 [L,QSA]
+
     # Prevent repeated rewriting after a request has entered dist.
     RewriteRule ^dist(?:/|$) - [L]
 

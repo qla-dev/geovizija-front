@@ -12,7 +12,7 @@ interface ArticleCardProps {
 export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'standard' }) => {
   if (variant === 'featured') {
     return (
-      <Link to={`/article/${article.id}`} className="group relative block h-full w-full overflow-hidden">
+      <Link to={`/article/${article.slug}`} className="group relative block h-full w-full overflow-hidden">
         <div className="absolute inset-0 bg-stone-900">
            <img 
             src={article.imageUrl} 
@@ -41,7 +41,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
 
   if (variant === 'horizontal') {
     return (
-      <Link to={`/article/${article.id}`} className="group flex flex-col md:flex-row h-full bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <Link to={`/article/${article.slug}`} className="group flex flex-col md:flex-row h-full bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
         {/* Mobile: the image is absolutely positioned, so the box needs its own height */}
         <div className="aspect-video md:aspect-auto md:w-2/5 relative overflow-hidden bg-stone-200 flex-shrink-0">
           <img 
@@ -78,7 +78,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
   // Small photo tile for dense grids (two per row on mobile)
   if (variant === 'tile') {
     return (
-      <Link to={`/article/${article.id}`} className="group flex flex-col h-full bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <Link to={`/article/${article.slug}`} className="group flex flex-col h-full bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
         <div className="aspect-[4/3] relative overflow-hidden bg-stone-200">
           <img
             src={article.imageUrl}
@@ -103,7 +103,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
 
   if (variant === 'compact') {
      return (
-      <Link to={`/article/${article.id}`} className="group flex gap-4 items-start py-4 border-b border-stone-200 last:border-0">
+      <Link to={`/article/${article.slug}`} className="group flex gap-4 items-start py-4 border-b border-stone-200 last:border-0">
         <div className="w-24 h-24 md:w-32 md:h-24 flex-shrink-0 overflow-hidden bg-stone-200">
           <img 
             src={article.imageUrl} 
@@ -127,7 +127,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, variant = 'st
 
   // Standard
   return (
-    <Link to={`/article/${article.id}`} className="group block bg-white h-full shadow-sm hover:shadow-md transition-shadow">
+    <Link to={`/article/${article.slug}`} className="group block bg-white h-full shadow-sm hover:shadow-md transition-shadow">
       <div className="aspect-video w-full overflow-hidden bg-stone-200 relative">
         <img 
           src={article.imageUrl} 

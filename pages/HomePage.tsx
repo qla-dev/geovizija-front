@@ -2,9 +2,9 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useContent } from '../components/ContentProvider';
 import { ArticleCard } from '../components/ArticleCard';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, Camera, Zap, Globe, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Camera, Zap, Globe, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CategoryPill } from '../components/CategoryPill';
-import { SEO } from '../components/SEO';
+import { SEO, SITE_DESCRIPTION, SITE_TAGLINE } from '../components/SEO';
 import { AdSlot } from '../components/AdSlot';
 
 export const HomePage: React.FC = () => {
@@ -64,7 +64,7 @@ export const HomePage: React.FC = () => {
   const moreArticles = allArticles.slice(9, 14).length ? allArticles.slice(9, 14) : allArticles.slice(0, 5);
 
   // Multimedia section
-  const multimediaArticle = pick(8);
+  const focusArticle = pick(8);
   const photoOfDayUrl = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2674&auto=format&fit=crop";
 
   // Slider Logic (Bottom Section)
@@ -86,8 +86,8 @@ export const HomePage: React.FC = () => {
   return (
     <div className="animate-fade-in bg-stone-100">
       <SEO 
-        title="Geovizija | Ekološki zabavnik za sve uzraste" 
-        description="Vaš prozor u svijet prirode. Najnovije vijesti o ekologiji, putovanjima i tehnologiji."
+        title={`Geovizija | ${SITE_TAGLINE}`}
+        description={SITE_DESCRIPTION}
       />
       
       {/* --- SECTION 1: HERO (Slider + Sidebar) --- */}
@@ -201,7 +201,7 @@ export const HomePage: React.FC = () => {
 
                         return (
                             <Link 
-                                to={`/article/${article.id}`} 
+                                to={`/article/${article.slug}`} 
                                 key={article.id} 
                                 className="group flex flex-col flex-shrink-0 w-[280px] md:w-[320px] snap-start"
                             >
@@ -314,54 +314,50 @@ export const HomePage: React.FC = () => {
           </div>
       </section>
 
-      {/* --- SECTION 4: MULTIMEDIA / DARK MODE --- */}
+      {/* --- SECTION 4: IN FOCUS (dark) --- */}
       <section className="bg-stone-950 text-white py-16 md:py-24 border-t border-stone-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-3xl md:text-4xl font-serif font-bold flex items-center gap-3">
-              <Play className="text-geo-green fill-geo-green" size={32} />
-              Geovizija<span className="text-geo-green">TV</span>
+              <span className="w-5 h-8 border-[3px] border-geo-green flex-shrink-0" aria-hidden="true" />
+              U <span className="text-geo-green">fokusu</span>
             </h2>
-            <button className="text-xs font-bold uppercase tracking-widest text-stone-400 hover:text-white transition-colors">
-              Pogledaj arhivu
-            </button>
+            <Link to="/categories" className="text-xs font-bold uppercase tracking-widest text-stone-400 hover:text-white transition-colors">
+              Sve priče
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-             {/* Main Video Player Placeholder - LEFT Content (Dynamic Height based on playlist) */}
-             <div className="lg:col-span-2 relative group cursor-pointer overflow-hidden border border-stone-800 bg-stone-900 min-h-[400px] lg:min-h-0">
-                {/* Image absolute to fill the stretched height */}
-                <img 
-                  src={multimediaArticle?.imageUrl || "https://picsum.photos/seed/video1/800/600"} 
-                  alt="Video thumbnail" 
-                  className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-500"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                   <div className="w-20 h-20 rounded-full bg-geo-green/90 text-stone-900 flex items-center justify-center pl-2 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_30px_rgba(16,185,129,0.5)]">
-                      <Play size={40} fill="currentColor" />
-                   </div>
-                </div>
-                <div className="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black via-black/60 to-transparent z-10">
-                   <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider mb-3 inline-block">Uživo</span>
-                   <h3 className="text-2xl md:text-3xl font-serif font-bold leading-tight">{multimediaArticle?.title}</h3>
-                </div>
-             </div>
+             {/* Featured story - LEFT (stretches to the list's height) */}
+             {focusArticle && (
+               <Link to={`/article/${focusArticle.slug}`} className="lg:col-span-2 relative group overflow-hidden border border-stone-800 bg-stone-900 min-h-[400px] lg:min-h-0">
+                  <img
+                    src={focusArticle.imageUrl}
+                    alt={focusArticle.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700"
+                  />
+                  <div className="absolute bottom-0 left-0 p-6 md:p-8 w-full bg-gradient-to-t from-black via-black/70 to-transparent">
+                     <CategoryPill id={focusArticle.categoryId} className="mb-3" />
+                     <h3 className="text-2xl md:text-4xl font-serif font-bold leading-tight mb-3 group-hover:text-geo-green transition-colors">{focusArticle.title}</h3>
+                     <p className="text-stone-300 line-clamp-2 max-w-2xl leading-relaxed">{focusArticle.excerpt}</p>
+                  </div>
+               </Link>
+             )}
 
-             {/* Playlist Side - RIGHT Content (Dictates height of the row) */}
+             {/* More stories - RIGHT (dictates the row height) */}
              <div className="flex flex-col gap-4">
-                {mixArticles.map((item, idx) => (
-                  <div key={idx} className="flex gap-4 p-4 bg-stone-900 hover:bg-stone-800 transition-colors cursor-pointer border-l-2 border-transparent hover:border-geo-green group flex-1">
-                     <div className="w-24 h-full min-h-[60px] bg-stone-800 flex-shrink-0 relative overflow-hidden">
-                        <img src={item.imageUrl} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Play size={16} className="text-white drop-shadow-md" fill="white" />
-                        </div>
+                {mixArticles.map((item) => (
+                  <Link key={item.id} to={`/article/${item.slug}`} className="flex gap-4 p-4 bg-stone-900 hover:bg-stone-800 transition-colors border-l-2 border-transparent hover:border-geo-green group flex-1">
+                     <div className="w-24 h-full min-h-[60px] bg-stone-800 flex-shrink-0 overflow-hidden">
+                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
                      </div>
-                     <div className="flex flex-col justify-center">
-                        <span className="text-[10px] text-geo-green font-bold uppercase mb-1">Epizoda {idx + 1}</span>
+                     <div className="flex flex-col justify-center min-w-0">
+                        <span className="text-[10px] text-geo-green font-bold uppercase tracking-wider mb-1">
+                          {allCategories.find(c => c.id === item.categoryId)?.name} · {item.readTime} min
+                        </span>
                         <h4 className="font-serif text-sm font-medium text-stone-200 line-clamp-2 leading-snug group-hover:text-white">{item.title}</h4>
                      </div>
-                  </div>
+                  </Link>
                 ))}
              </div>
           </div>
@@ -460,7 +456,7 @@ export const HomePage: React.FC = () => {
                  {/* Main Feature (8 cols) - Dynamic Height based on content */}
                  <div className="lg:col-span-8 group relative cursor-pointer min-h-[400px] lg:min-h-0 h-full">
                     {travelArticles[0] && (
-                      <Link to={`/article/${travelArticles[0].id}`} className="block h-full relative overflow-hidden bg-stone-900">
+                      <Link to={`/article/${travelArticles[0].slug}`} className="block h-full relative overflow-hidden bg-stone-900">
                          <img 
                             src={travelArticles[0].imageUrl} 
                             alt={travelArticles[0].title} 
@@ -495,7 +491,7 @@ export const HomePage: React.FC = () => {
                        
                        <div className="space-y-4">
                           {travelSidebarItems.map((article) => (
-                             <Link key={article.id} to={`/article/${article.id}`} className="flex gap-4 group">
+                             <Link key={article.id} to={`/article/${article.slug}`} className="flex gap-4 group">
                                 <div className="w-24 h-24 bg-stone-800 flex-shrink-0 overflow-hidden">
                                    <img 
                                      src={article.imageUrl} 

@@ -92,7 +92,7 @@ export const SearchOverlay: React.FC<{ open: boolean; onClose: () => void }> = (
 
   const openResult = (result: Result) => {
     onClose();
-    navigate(result.kind === 'category' ? `/category/${result.category.id}` : `/article/${result.article.id}`);
+    navigate(result.kind === 'category' ? `/category/${result.category.id}` : `/article/${result.article.slug}`);
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
@@ -10,9 +10,15 @@ import { Comments } from '../components/Comments';
 
 export const ArticlePage: React.FC = () => {
   const { articles: allArticles, categories: allCategories } = useContent();
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const article = allArticles.find(a => a.id === id);
+  // Old links use the numeric id; they are moved to the slug URL below.
+  const article = allArticles.find(a => a.slug === slug) ?? allArticles.find(a => a.id === slug);
+  const id = article?.id;
+
+  useEffect(() => {
+    if (article && article.slug !== slug) navigate(`/article/${article.slug}`, { replace: true });
+  }, [article, slug, navigate]);
   
 
   // Filter related articles for the sidebar
@@ -173,7 +179,7 @@ export const ArticlePage: React.FC = () => {
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-6 md:gap-x-6 md:gap-y-10">
                     {suggestedArticles.map(article => (
-                        <Link to={`/article/${article.id}`} key={article.id} className="group block">
+                        <Link to={`/article/${article.slug}`} key={article.id} className="group block">
                             <div className="aspect-[3/2] w-full overflow-hidden bg-stone-200 mb-3 relative">
                                 <img 
                                     src={article.imageUrl} 
@@ -212,7 +218,7 @@ export const ArticlePage: React.FC = () => {
                  
                  <div className="flex flex-col gap-6">
                     {relatedArticles.map((rel) => (
-                      <Link to={`/article/${rel.id}`} key={rel.id} className="group flex gap-4 items-start">
+                      <Link to={`/article/${rel.slug}`} key={rel.id} className="group flex gap-4 items-start">
                          <div className="w-28 h-20 bg-stone-200 flex-shrink-0 overflow-hidden relative">
                             <img 
                               src={rel.imageUrl} 

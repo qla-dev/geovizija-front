@@ -1,4 +1,10 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+// Keep in sync with index.html (static defaults) and og.php (crawler previews).
+export const SITE_TAGLINE = 'Balkanski lider u istraživanju';
+export const SITE_DESCRIPTION = 'Geovizija - balkanski lider u istraživanju prirode, ljudi i svijeta oko nas.';
+export const SITE_IMAGE = 'https://geovizija.com/og-default.jpg';
 
 interface SEOProps {
   title: string;
@@ -9,10 +15,13 @@ interface SEOProps {
 
 export const SEO: React.FC<SEOProps> = ({ 
   title, 
-  description = "Geovizija - Premium portal za ekološke vijesti, prirodu i održivi razvoj.", 
-  image = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80",
+  description = SITE_DESCRIPTION,
+  image = SITE_IMAGE,
   type = "website"
 }) => {
+  // Re-run on path changes too, e.g. an old /article/{id} link replaced by its slug URL.
+  const { pathname } = useLocation();
+
   useEffect(() => {
     // Update Document Title
     document.title = title;
@@ -36,7 +45,9 @@ export const SEO: React.FC<SEOProps> = ({
     setMeta('og:description', description, 'property');
     setMeta('og:image', image, 'property');
     setMeta('og:type', type, 'property');
-    setMeta('og:url', window.location.href, 'property');
+    const url = window.location.origin + window.location.pathname;
+    setMeta('og:url', url, 'property');
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', url);
     setMeta('og:site_name', 'Geovizija', 'property');
 
     // Twitter Card
@@ -45,7 +56,7 @@ export const SEO: React.FC<SEOProps> = ({
     setMeta('twitter:description', description, 'name');
     setMeta('twitter:image', image, 'name');
 
-  }, [title, description, image, type]);
+  }, [title, description, image, type, pathname]);
 
   return null;
 };

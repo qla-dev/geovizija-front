@@ -18,6 +18,7 @@ export interface Category {
 
 export interface Article {
   id: string;
+  slug: string; // URL: /article/{slug}
   title: string;
   excerpt: string;
   content: string; // Full mock content
