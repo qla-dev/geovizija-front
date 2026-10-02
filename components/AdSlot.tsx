@@ -44,9 +44,19 @@ export const AdSlot: React.FC<{ variant?: AdVariant; placement?: AdPlacement; cl
   useEffect(() => {
     const ins = ref.current;
     if (!ins) return;
-    const check = () => setFilled(ins.getAttribute('data-ad-status') === 'filled');
+    // "filled" alone is not enough: AdSense can mark a slot filled before (or without) an ad showing,
+    // so the slot also needs a rendered ad iframe with real height.
+    const check = () => {
+      const frame = ins.querySelector('iframe');
+      setFilled(ins.getAttribute('data-ad-status') === 'filled' && !!frame && frame.getBoundingClientRect().height > 20);
+    };
     const observer = new MutationObserver(check);
-    observer.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
+    observer.observe(ins, { attributes: true, childList: true, subtree: true });
+    const resize = new ResizeObserver(check);
+    resize.observe(ins);
+    // The iframe can grow after it is inserted; look again for a little while.
+    const timer = window.setInterval(check, 1000);
+    const stop = window.setTimeout(() => window.clearInterval(timer), 15000);
     check();
 
     // StrictMode runs effects twice; AdSense throws if a slot is filled twice.
@@ -57,7 +67,12 @@ export const AdSlot: React.FC<{ variant?: AdVariant; placement?: AdPlacement; cl
         // Blocked by an ad blocker or not loaded yet - the slot stays collapsed.
       }
     }
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      resize.disconnect();
+      window.clearInterval(timer);
+      window.clearTimeout(stop);
+    };
   }, []);
 
   const fluid = variant === 'inArticle';
