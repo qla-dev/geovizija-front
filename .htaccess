@@ -5,6 +5,16 @@ DirectoryIndex dist/index.html
     Require all denied
 </FilesMatch>
 
+# The host's nginx cache ignores the User-Agent, so a cached page would give crawlers
+# the visitors' HTML (or the reverse). Keep the small HTML pages out of shared caches;
+# hashed assets in dist/assets stay cacheable.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html|php)$">
+        Header set Cache-Control "private, no-cache"
+        Header append Vary "User-Agent"
+    </FilesMatch>
+</IfModule>
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 

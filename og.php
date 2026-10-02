@@ -20,6 +20,9 @@ if ($html === false) {
 }
 
 header('Content-Type: text/html; charset=UTF-8');
+// Not for shared caches: the same URL serves different HTML to people (see .htaccess).
+header('Cache-Control: private, no-cache');
+header('Vary: User-Agent');
 
 $fetch = function (string $path): ?array {
     $context = stream_context_create(['http' => ['timeout' => 4, 'ignore_errors' => true, 'header' => "Accept: application/json\r\n"]]);
