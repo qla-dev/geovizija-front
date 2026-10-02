@@ -21,15 +21,16 @@ body {
   animation: progress 6s linear;
 }
 /* Mobile bottom nav: 4rem tall plus the iPhone home-indicator inset.
-   Content padding uses the same sum so nothing is hidden and no gap is left. */
+   The footer (the last thing on every page) adds the same sum below its own 1.5rem,
+   so its end scrolls clear of the nav and no empty band is left above it. */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
-.pb-bottom-nav {
-  padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+.pb-footer {
+  padding-bottom: calc(1.5rem + 4rem + env(safe-area-inset-bottom));
 }
 @media (min-width: 768px) {
-  .pb-bottom-nav { padding-bottom: 0; }
+  .pb-footer { padding-bottom: 2rem; }
 }
 
 /* Quiz answer flash */

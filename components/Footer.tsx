@@ -7,7 +7,7 @@ const COPYRIGHT_START = 2018;
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-black text-white pt-16 pb-6 md:pt-24 md:pb-8 border-t border-stone-800">
+    <footer className="bg-black text-white pt-16 md:pt-24 pb-footer border-t border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Main Footer Links Grid (desktop only; mobile shows just the bottom bar) */}
