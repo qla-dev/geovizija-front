@@ -32,6 +32,7 @@ export const Footer: React.FC = () => {
               <li><Link to="/quiz" className="text-xs text-stone-400 hover:text-white transition-colors">Kviz dana</Link></li>
               <li><Link to="/category/skolstvo" className="text-xs text-stone-400 hover:text-white transition-colors">Za djecu i škole</Link></li>
               <li><a href="/#newsletter" className="text-xs text-stone-400 hover:text-white transition-colors">Newsletter</a></li>
+              <li><Link to="/privatnost" className="text-xs text-stone-400 hover:text-white transition-colors">Politika privatnosti</Link></li>
             </ul>
           </div>
 
@@ -59,6 +60,8 @@ export const Footer: React.FC = () => {
              <span>Copyright © {COPYRIGHT_START}–{new Date().getFullYear()} Geovizija</span>
              <span className="hidden md:inline">|</span>
              <span>Sva prava pridržana</span>
+             <span className="hidden md:inline">|</span>
+             <Link to="/privatnost" className="hover:text-white transition-colors">Politika privatnosti</Link>
           </div>
         </div>
       </div>
