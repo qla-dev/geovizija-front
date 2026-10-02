@@ -50,7 +50,7 @@ export const PublishPage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-stone-100">
       <SEO title="Objavi | Geovizija" />
-      <div className="max-w-2xl mx-auto px-4 py-8 md:py-12">
+      <div className="max-w-2xl mx-auto px-4 py-16 md:py-24">
         <p className="text-geo-green text-xs font-bold uppercase tracking-[0.25em]">Uredništvo</p>
         <h1 className="font-serif font-black text-3xl md:text-4xl text-stone-900 mt-2">Objavi sadržaj</h1>
         <p className="text-stone-500 text-sm mt-2 leading-relaxed">

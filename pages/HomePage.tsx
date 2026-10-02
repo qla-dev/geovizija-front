@@ -162,7 +162,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <div className="bg-stone-100 px-4 py-6 md:py-8"><AdSlot /></div>
+      <div className="bg-stone-100 px-4 py-16 md:py-24"><AdSlot /></div>
 
       {/* --- NEW SECTION: MORE FROM GEOVIZIJA (SLIDER) --- */}
       <section className="bg-black text-white py-16 md:py-24 border-t border-stone-800 overflow-hidden">
@@ -192,7 +192,7 @@ export const HomePage: React.FC = () => {
             <div className="w-[calc(100%_+_50vw_-_50%)] -mr-[calc(50vw_-_50%)]">
                 <div 
                     ref={sliderRef}
-                    className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar scroll-smooth pr-[calc(50vw_-_50%)]"
+                    className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth pr-[calc(50vw_-_50%)]"
                 >
                     {moreArticles.map((article) => {
                         const category = allCategories.find(c => c.id === article.categoryId);
@@ -245,7 +245,7 @@ export const HomePage: React.FC = () => {
          />
          <div className="absolute inset-0 bg-stone-900/30"></div>
          
-         <div className="relative z-10 w-full bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent pt-32 pb-16">
+         <div className="relative z-10 w-full bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent pt-32 pb-16 md:pb-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-end justify-between gap-8">
                <div className="max-w-2xl">
                   <div className="flex items-center gap-2 text-white/80 mb-4">
@@ -271,10 +271,10 @@ export const HomePage: React.FC = () => {
          </div>
       </section>
 
-      <div className="bg-stone-100 px-4 py-6 md:py-8"><AdSlot /></div>
+      <div className="bg-stone-100 px-4 py-16 md:py-24"><AdSlot /></div>
 
       {/* --- SECTION 3: TECHNOLOGY SPOTLIGHT (White BG) --- */}
-      <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pb-16 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10 pb-4 border-b border-stone-300">
              <div>
                <span className="text-geo-green font-bold uppercase tracking-widest text-xs mb-2 block">Inovacije</span>
@@ -369,7 +369,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- SECTION 5: NATURE & FACTS --- */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24">
          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
             {/* Left Content (8 cols) */}
@@ -432,7 +432,7 @@ export const HomePage: React.FC = () => {
          </div>
       </div>
 
-      <div className="bg-stone-100 px-4 py-6 md:py-8"><AdSlot /></div>
+      <div className="bg-stone-100 px-4 py-16 md:py-24"><AdSlot /></div>
 
       {/* --- NEW SECTION: PUTOVANJA (TRAVEL) --- */}
       <section className="relative bg-stone-950 text-white overflow-hidden py-16 md:py-24">

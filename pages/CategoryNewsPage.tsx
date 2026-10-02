@@ -68,7 +68,7 @@ export const CategoryNewsPage: React.FC = () => {
   }
 
   return (
-    <div className="animate-fade-in min-h-screen bg-stone-100 pb-20">
+    <div className="animate-fade-in min-h-screen bg-stone-100 pb-16 md:pb-24">
       <SEO 
         title={`${category.name} | Geovizija`}
         description={`Najnovije vijesti, analize i reportaže iz svijeta ${category.name.toLowerCase()}.`}
@@ -86,7 +86,7 @@ export const CategoryNewsPage: React.FC = () => {
          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/60"></div>
          <span className={`absolute left-0 bottom-0 h-1 w-full ${category.color}`}></span>
 
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-4 md:pt-8 pb-8 md:pb-14">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24">
             <div className="flex items-center justify-between gap-3">
                <nav className="flex items-center gap-2 min-w-0 text-white/70 text-[11px] md:text-xs font-bold uppercase tracking-widest">
                   <Link to="/" className="hover:text-white transition-colors">Naslovna</Link>
@@ -127,7 +127,7 @@ export const CategoryNewsPage: React.FC = () => {
          </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24">
          {/* Articles Content */}
          {articles.length === 0 ? (
              <div className="bg-white p-16 text-center border border-stone-200 shadow-sm">

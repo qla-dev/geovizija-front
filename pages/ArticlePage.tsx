@@ -61,7 +61,7 @@ export const ArticlePage: React.FC = () => {
   const categoryName = allCategories.find(c => c.id === article.categoryId)?.name || 'Vijesti';
 
   return (
-    <article className="animate-fade-in bg-white min-h-screen md:pb-20">
+    <article className="animate-fade-in bg-white min-h-screen">
       <SEO 
         title={`${article.title} | Geovizija`}
         description={article.excerpt}
@@ -121,7 +121,7 @@ export const ArticlePage: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* LEFT COLUMN: ARTICLE CONTENT */}

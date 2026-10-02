@@ -135,7 +135,7 @@ export const QuizPlayPage: React.FC = () => {
     return (
       <div className="animate-fade-in min-h-[80vh] bg-stone-950 text-white">
         <SEO title={`Rezultat: ${result.score}/${result.total} | Geovizija kviz`} />
-        <div className="max-w-xl mx-auto px-4 py-10 md:py-16 text-center">
+        <div className="max-w-xl mx-auto px-4 py-16 md:py-24 text-center">
           <p className="text-geo-green text-xs font-bold uppercase tracking-[0.25em]">{formatQuizDate(quiz.date)}</p>
           <h1 className="font-serif font-black text-3xl md:text-4xl mt-2">{quiz.title}</h1>
 

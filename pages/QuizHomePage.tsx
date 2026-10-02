@@ -33,7 +33,7 @@ export const QuizHomePage: React.FC = () => {
       <section className="relative overflow-hidden bg-stone-950 text-white">
         <div className="absolute -right-16 -top-16 w-72 h-72 rounded-full bg-geo-green/20 blur-3xl" />
         <div className="absolute -left-20 bottom-0 w-64 h-64 rounded-full bg-emerald-700/20 blur-3xl" />
-        <div className="relative max-w-3xl mx-auto px-4 pt-8 pb-10 md:pt-14 md:pb-16">
+        <div className="relative max-w-3xl mx-auto px-4 py-16 md:py-24">
           <p className="flex items-center gap-2 text-geo-green text-xs font-bold uppercase tracking-[0.25em]">
             <Brain size={14} /> Dnevni kviz
           </p>
@@ -91,7 +91,7 @@ export const QuizHomePage: React.FC = () => {
       </section>
 
       {/* Archive */}
-      <section className="max-w-3xl mx-auto px-4 py-8 md:py-12">
+      <section className="max-w-3xl mx-auto px-4 py-16 md:py-24">
         <h2 className="text-xs font-bold uppercase tracking-widest text-stone-500 mb-3">Prethodni kvizovi</h2>
 
         {error && <p className="text-stone-500 bg-white border border-stone-200 p-6 text-center">Kvizovi trenutno nisu dostupni.</p>}
