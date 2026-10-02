@@ -1,24 +1,67 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
-// Placeholder for an ad unit until a real ad network is wired in.
+// Google AdSense unit. The loader script is in index.html; auto ads are off,
+// so every ad on the site comes from one of these slots.
 //   banner     320x100 on mobile, 728x90 from md
-//   rectangle  300x250 (in-article / sidebar)
-type AdVariant = 'banner' | 'rectangle';
+//   rectangle  300x250 (sidebar)
+//   inArticle  fluid in-article unit between paragraphs
+type AdVariant = 'banner' | 'rectangle' | 'inArticle';
 
-const SIZES: Record<AdVariant, { box: string; label: string }> = {
-  banner: { box: 'h-[100px] md:h-[90px] max-w-[728px]', label: '320×100 · 728×90' },
-  rectangle: { box: 'h-[250px] max-w-[300px]', label: '300×250' },
+// Where the slot sits on the page, mapped to the ad units in the AdSense account.
+type AdPlacement = 'section' | 'feed' | 'bottom' | 'quiz' | 'sidebar' | 'article';
+
+const AD_CLIENT = 'ca-pub-2999890187609831';
+
+const AD_UNITS: Record<AdPlacement, string> = {
+  section: '8849497816', // "header footer" - banners between home page sections
+  feed: '8849497816',    // "header footer" - banner inside article lists
+  bottom: '7975362945',  // "donji banner"  - end of article / category pages
+  quiz: '6347312853',    // "footer"        - below quiz answers
+  sidebar: '6347312853', // "footer"        - article sidebar
+  article: '4085035036', // "intext"        - in-article, after the third paragraph
 };
 
-export const AdSlot: React.FC<{ variant?: AdVariant; className?: string }> = ({ variant = 'banner', className = '' }) => {
-  const size = SIZES[variant];
+const SIZES: Record<AdVariant, string> = {
+  banner: 'w-[320px] h-[100px] md:w-[728px] md:h-[90px]',
+  rectangle: 'w-[300px] h-[250px]',
+  inArticle: 'w-full min-h-[250px]',
+};
+
+declare global {
+  interface Window { adsbygoogle?: unknown[] }
+}
+
+export const AdSlot: React.FC<{ variant?: AdVariant; placement?: AdPlacement; className?: string }> = ({
+  variant = 'banner',
+  placement = 'section',
+  className = '',
+}) => {
+  const ref = useRef<HTMLModElement>(null);
+
+  useEffect(() => {
+    // StrictMode runs effects twice; AdSense throws if a slot is filled twice.
+    if (!ref.current || ref.current.getAttribute('data-adsbygoogle-status')) return;
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch {
+      // Blocked by an ad blocker or not loaded yet - leave the slot empty.
+    }
+  }, []);
+
+  const fluid = variant === 'inArticle';
 
   return (
-    <aside className={`w-full ${className}`} aria-label="Oglas">
-      <div className={`mx-auto w-full ${size.box} flex flex-col items-center justify-center gap-1 bg-stone-200/60 border border-dashed border-stone-300 text-stone-400`}>
-        <span className="text-[10px] font-bold uppercase tracking-[0.25em]">Oglas</span>
-        <span className="text-[10px] tracking-widest">{size.label}</span>
-      </div>
+    <aside className={`w-full flex flex-col items-center ${className}`} aria-label="Oglas">
+      <span className="mb-1 text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">Oglas</span>
+      <ins
+        ref={ref}
+        className={`adsbygoogle max-w-full ${SIZES[variant]}`}
+        style={fluid ? { display: 'block', textAlign: 'center' } : { display: 'inline-block' }}
+        data-ad-client={AD_CLIENT}
+        data-ad-slot={AD_UNITS[placement]}
+        {...(fluid ? { 'data-ad-layout': 'in-article', 'data-ad-format': 'fluid' } : {})}
+        {...(import.meta.env.DEV ? { 'data-adtest': 'on' } : {})}
+      />
     </aside>
   );
 };

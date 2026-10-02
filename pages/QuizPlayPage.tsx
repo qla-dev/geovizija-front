@@ -239,7 +239,7 @@ export const QuizPlayPage: React.FC = () => {
         </div>
 
         {/* Ad below the answers */}
-        <AdSlot className="mt-8" />
+        <AdSlot placement="quiz" className="mt-8" />
 
         {answered && (
           <div className="mt-6">

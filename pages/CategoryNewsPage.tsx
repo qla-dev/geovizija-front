@@ -149,7 +149,7 @@ export const CategoryNewsPage: React.FC = () => {
                      <ArticleCard key={article.id} article={article} variant="tile" />
                   ))}
                </div>
-               <AdSlot className="mt-6" />
+               <AdSlot placement="bottom" className="mt-6" />
                </>
              ) : (
                // List: one large card per row
@@ -159,7 +159,7 @@ export const CategoryNewsPage: React.FC = () => {
                        <div className="h-auto md:h-64">
                           <ArticleCard article={article} variant="horizontal" />
                        </div>
-                       {i === 1 && <AdSlot />}
+                       {i === 1 && <AdSlot placement="feed" />}
                      </React.Fragment>
                   ))}
                </div>

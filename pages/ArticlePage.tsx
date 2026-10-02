@@ -170,7 +170,7 @@ export const ArticlePage: React.FC = () => {
                   return (
                     <React.Fragment key={index}>
                       <p className="mb-6 leading-loose">{block}</p>
-                      {paragraphs === 3 && <AdSlot variant="rectangle" className="my-8 not-prose" />}
+                      {paragraphs === 3 && <AdSlot variant="inArticle" placement="article" className="my-8 not-prose" />}
                     </React.Fragment>
                   );
                 });
@@ -179,7 +179,7 @@ export const ArticlePage: React.FC = () => {
 
             <ShareBar title={article.title} />
 
-            <AdSlot className="mt-8" />
+            <AdSlot placement="bottom" className="mt-8" />
 
             {/* COMMENTING MECHANISM */}
             <div className="mt-16">
@@ -314,11 +314,7 @@ export const ArticlePage: React.FC = () => {
                  </div>
                </div>
 
-               {/* Ad Placeholder / Sidebar Extra */}
-               <div className="bg-stone-100 h-[300px] w-full flex flex-col items-center justify-center border border-stone-200 text-center p-4">
-                  <span className="text-stone-400 text-xs uppercase font-bold tracking-widest mb-2">Oglas</span>
-                  <p className="text-stone-500 font-serif italic">Vaš prozor u svijet prirode.</p>
-               </div>
+               <AdSlot variant="rectangle" placement="sidebar" />
 
             </div>
           </div>

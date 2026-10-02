@@ -64,7 +64,7 @@ export const CategoryPage: React.FC = () => {
       <div className="md:hidden bg-white">
         {entries.map(({ category, posts, latest, image, number }, index) => (
           <React.Fragment key={category.id}>
-          {index === 4 && <div className="px-4 py-5 border-b border-stone-200 bg-stone-100"><AdSlot /></div>}
+          {index === 4 && <div className="px-4 py-5 border-b border-stone-200 bg-stone-100"><AdSlot placement="feed" /></div>}
           <Link
             to={`/category/${category.id}`}
             className="flex gap-4 px-4 py-4 border-b border-stone-200 active:bg-stone-50"
@@ -98,7 +98,7 @@ export const CategoryPage: React.FC = () => {
             <CategoryTile key={entry.category.id} entry={entry} wide={i === rest.length - 1 && (rest.length - 2) % 3 === 2} />
           ))}
         </div>
-        <AdSlot className="mt-10" />
+        <AdSlot placement="bottom" className="mt-10" />
       </div>
     </div>
   );
