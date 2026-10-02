@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContent } from './ContentProvider';
 import { SearchOverlay, OPEN_SEARCH_EVENT, openSearch } from './SearchOverlay';
 import { useQuizProgress } from '../services/quizProgress';
@@ -42,9 +42,14 @@ const WeatherIcon = ({ condition, className }: { condition: string, className?: 
   }
 };
 
+const navItem = 'text-xs lg:text-sm font-bold uppercase tracking-widest whitespace-nowrap transition-all py-5 border-b-2';
+const navActive = 'text-white border-geo-green';
+const navIdle = 'text-stone-400 border-transparent hover:text-geo-green hover:border-geo-green/50';
+
 export const Header: React.FC = () => {
   const { categories: allCategories } = useContent();
   const location = useLocation();
+  const navigate = useNavigate();
   const [weatherIndex, setWeatherIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -87,11 +92,24 @@ export const Header: React.FC = () => {
 
   const currentWeather = CITIES[weatherIndex];
 
+  // Subscribe opens the newsletter block at the bottom of the home page.
+  const goToNewsletter = () => {
+    if (location.pathname !== '/') navigate('/');
+    let tries = 0;
+    const scroll = () => {
+      const target = document.getElementById('newsletter');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      else if (tries++ < 20) setTimeout(scroll, 50);
+    };
+    setTimeout(scroll, 0);
+  };
+
   return (
     <header className={`sticky top-0 z-50 bg-stone-950 text-white shadow-lg ${quizProgress ? '' : 'border-b-4 border-geo-green'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          
+      {/* Full width: the header uses less side padding than page containers,
+          and the subscribe button sits flush against the right edge from lg. */}
+      <div className="flex justify-between items-stretch h-16 pl-4 pr-4 md:pl-6 md:pr-6 lg:pr-0">
+
           {/* Mobile Left: Weather (Replaces Menu) */}
           <div className="flex items-center md:hidden w-24">
              <div className={`flex items-center gap-2 transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
@@ -113,38 +131,35 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-6 lg:space-x-8 items-center justify-center flex-1 px-8">
-            {allCategories.slice(0, 6).map((cat) => {
+          {/* Desktop Navigation: more categories fit as the screen widens */}
+          <nav className="hidden md:flex gap-6 lg:gap-8 items-center justify-center flex-1 px-6 lg:px-8 min-w-0">
+            {allCategories.slice(0, 6).map((cat, index) => {
               const isActive = location.pathname === `/category/${cat.id}`;
               return (
-                <Link 
+                <Link
                   key={cat.id}
                   to={`/category/${cat.id}`}
                   className={`
-                    text-xs lg:text-sm font-bold uppercase tracking-widest transition-all py-5 border-b-2
-                    ${isActive ? 'text-white border-geo-green' : 'text-stone-400 border-transparent hover:text-geo-green hover:border-geo-green/50'}
+                    ${index >= 4 ? 'hidden 2xl:block' : index >= 2 ? 'hidden xl:block' : ''}
+                    ${navItem} ${isActive ? navActive : navIdle}
                   `}
                 >
                   {cat.name}
                 </Link>
               );
             })}
-             <Link 
+             <Link
                 to="/categories"
-                className={`
-                  text-xs lg:text-sm font-bold uppercase tracking-widest transition-all py-5 border-b-2
-                  ${location.pathname === '/categories' ? 'text-white border-geo-green' : 'text-stone-400 border-transparent hover:text-geo-green hover:border-geo-green/50'}
-                `}
+                className={`${navItem} ${location.pathname === '/categories' ? navActive : navIdle}`}
               >
                 Više
               </Link>
           </nav>
 
-          {/* Desktop Right Actions: Search & Weather */}
-          <div className="hidden md:flex items-center gap-6">
-             
-             <button onClick={openSearch} className="p-2 text-stone-300 hover:text-white transition-colors" aria-label="Pretraga (Ctrl+K)" title="Pretraga (Ctrl+K)">
+          {/* Desktop Right Actions: Search, Weather, Login, Subscribe - same gap as the menu items */}
+          <div className="hidden md:flex items-center gap-6 lg:gap-8">
+
+             <button onClick={openSearch} className="p-2 -mx-2 text-stone-300 hover:text-white transition-colors" aria-label="Pretraga (Ctrl+K)" title="Pretraga (Ctrl+K)">
                <Search size={20} />
              </button>
 
@@ -158,7 +173,17 @@ export const Header: React.FC = () => {
                    </div>
                 </div>
              </div>
-             
+
+             <Link to="/profile" className="hidden lg:block text-xs lg:text-sm font-bold uppercase tracking-widest text-stone-300 hover:text-white transition-colors whitespace-nowrap">
+               Prijava
+             </Link>
+
+             <button
+               onClick={goToNewsletter}
+               className="hidden lg:flex items-center self-stretch px-6 xl:px-8 bg-geo-green text-stone-950 text-xs lg:text-sm font-black uppercase tracking-widest hover:bg-white transition-colors whitespace-nowrap"
+             >
+               Pretplati se
+             </button>
           </div>
 
           {/* Mobile Right: Search */}
@@ -167,7 +192,6 @@ export const Header: React.FC = () => {
                <Search size={24} />
              </button>
           </div>
-        </div>
       </div>
       {/* During a quiz the 4px bottom border becomes the question stepper */}
       {quizProgress && (

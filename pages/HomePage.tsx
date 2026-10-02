@@ -555,7 +555,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* --- NEWSLETTER --- */}
-      <div className="bg-stone-900 py-16 md:py-24 border-t border-stone-800">
+      <div id="newsletter" className="bg-stone-900 py-16 md:py-24 border-t border-stone-800">
          <div className="max-w-4xl mx-auto px-4 text-center">
             <span className="text-geo-green font-bold uppercase tracking-widest text-xs mb-4 block">Newsletter</span>
             <h2 className="text-3xl md:text-5xl font-serif font-black text-white mb-6">
