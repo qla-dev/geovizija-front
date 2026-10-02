@@ -162,7 +162,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <div className="bg-stone-100 px-4 py-16 md:py-24"><AdSlot /></div>
+      <AdSlot className="bg-stone-100 px-4 py-16 md:py-24" />
 
       {/* --- NEW SECTION: MORE FROM GEOVIZIJA (SLIDER) --- */}
       <section className="bg-black text-white py-16 md:py-24 border-t border-stone-800 overflow-hidden">
@@ -271,7 +271,7 @@ export const HomePage: React.FC = () => {
          </div>
       </section>
 
-      <div className="bg-stone-100 px-4 py-16 md:py-24"><AdSlot /></div>
+      <AdSlot className="bg-stone-100 px-4 py-16 md:py-24" />
 
       {/* --- SECTION 3: TECHNOLOGY SPOTLIGHT (White BG) --- */}
       <section className="pb-16 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -428,7 +428,7 @@ export const HomePage: React.FC = () => {
          </div>
       </div>
 
-      <div className="bg-stone-100 px-4 py-16 md:py-24"><AdSlot /></div>
+      <AdSlot className="bg-stone-100 px-4 py-16 md:py-24" />
 
       {/* --- NEW SECTION: PUTOVANJA (TRAVEL) --- */}
       <section className="relative bg-stone-950 text-white overflow-hidden py-16 md:py-24">
