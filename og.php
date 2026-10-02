@@ -44,6 +44,9 @@ if (preg_match('/^[a-z0-9-]{1,191}$/', $slug)) {
             'description' => $post['excerpt'],
             'image' => $post['imageUrl'] ?: null,
             'extra' => array_filter([
+                // Known size lets Facebook show the large preview on the first share.
+                'og:image:width' => $post['imageWidth'] ?? null,
+                'og:image:height' => $post['imageHeight'] ?? null,
                 'article:published_time' => $post['publishedAt'] ?? null,
                 'article:section' => $post['category']['name'] ?? null,
                 'article:author' => $post['author'] ?? null,
