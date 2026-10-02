@@ -165,7 +165,7 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Desktop Navigation: every category; on the tightest level it scrolls if it still does not fit */}
-          <nav ref={navRef} className={`hidden md:flex md:order-last md:basis-full md:h-11 md:border-t md:border-stone-800 xl:order-none xl:basis-auto xl:h-auto xl:border-0 ${d.gap} ${d.pad} items-center flex-1 min-w-0 ${tightest ? 'justify-start overflow-x-auto no-scrollbar' : 'justify-center'}`}>
+          <nav ref={navRef} className={`hidden md:flex md:order-last md:basis-full md:h-11 md:border-t md:border-stone-800 xl:order-none xl:basis-auto xl:h-auto xl:border-0 ${d.gap} ${d.pad} items-center flex-1 min-w-0 ${tightest ? 'justify-start overflow-x-auto no-scrollbar' : 'justify-center xl:justify-start'}`}>
             {allCategories.map((cat) => {
               const isActive = location.pathname === `/category/${cat.id}`;
               return (
@@ -193,12 +193,12 @@ export const Header: React.FC = () => {
                <Search size={20} />
              </button>
 
-             {/* Weather Widget */}
-             <div className={`flex items-center gap-3 bg-stone-900/50 px-3 py-1.5 rounded-md border border-stone-800 ${density < 2 ? 'min-w-[140px]' : ''} justify-between cursor-default group hover:border-geo-green/30 transition-colors`}>
-                <div className={`flex items-center gap-3 transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
+             {/* Weather Widget: fixed width, so changing cities never move the menu */}
+             <div className="flex items-center gap-3 bg-stone-900/50 px-3 py-1.5 rounded-md border border-stone-800 w-[148px] flex-shrink-0 justify-between cursor-default group hover:border-geo-green/30 transition-colors">
+                <div className={`flex items-center gap-3 min-w-0 transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
                    <WeatherIcon condition={currentWeather.condition} className="text-geo-green w-5 h-5 group-hover:text-white transition-colors" />
-                   <div className="flex flex-col">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 leading-none mb-1 group-hover:text-geo-green transition-colors">{currentWeather.name}</span>
+                   <div className="flex flex-col min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 leading-none mb-1 group-hover:text-geo-green transition-colors truncate">{currentWeather.name}</span>
                       <span className="text-sm font-bold leading-none">{currentWeather.temp}°C</span>
                    </div>
                 </div>

@@ -71,7 +71,7 @@ export const ArticlePage: React.FC = () => {
              </button>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 lg:p-20 max-w-7xl mx-auto">
+        <div className="absolute bottom-0 left-0 w-full px-6 pt-6 pb-6 md:px-12 md:pb-8 lg:px-20 max-w-7xl mx-auto">
            <CategoryPill id={article.categoryId} className="mb-4 text-sm px-3 py-1" />
            <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl font-bold text-white leading-tight mb-6 drop-shadow-lg max-w-5xl">
              {article.title}
