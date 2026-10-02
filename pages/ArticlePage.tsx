@@ -108,7 +108,7 @@ export const ArticlePage: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 md:pt-12 md:pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 md:pt-8 md:pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* LEFT COLUMN: ARTICLE CONTENT */}
@@ -118,8 +118,8 @@ export const ArticlePage: React.FC = () => {
               {article.excerpt}
             </p>
 
-            {/* TABS / REPORT COMPONENT */}
-            <div className="mb-5 md:mb-10 pb-4 border-b border-stone-100">
+            {/* TABS / REPORT COMPONENT (same 24/32 px spacing above and below the intro and the tags) */}
+            <div className="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-stone-100">
                <div className="flex flex-wrap gap-2">
                   <span className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-lg cursor-pointer transition-colors">
                      {categoryName}
