@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { Article, Category, Quiz, QuizSummary } from '../types';
+import { Article, Category, Comment, Quiz, QuizSummary } from '../types';
 
 // Pick the backend with VITE_API_BACKEND in .env.local (default: production).
 //   production -> the deployed Laravel API (works from a local `npm run dev` too)
@@ -21,14 +21,19 @@ export class ApiError extends Error {
 
 type Envelope<T> = { data: T; meta?: { total: number; current_page: number; last_page: number } };
 
-const request = async <T>(path: string): Promise<Envelope<T>> => {
+const request = async <T>(path: string, init: { method?: string; body?: unknown } = {}): Promise<Envelope<T>> => {
   const response = await fetch(`${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`, {
-    headers: { Accept: 'application/json' },
+    method: init.method ?? 'GET',
+    headers: { Accept: 'application/json', ...(init.body !== undefined ? { 'Content-Type': 'application/json' } : {}) },
+    body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
     credentials: 'omit',
   });
-  const payload = await response.json().catch(() => null) as (Envelope<T> & { message?: string }) | null;
+  const payload = await response.json().catch(() => null) as (Envelope<T> & { message?: string; errors?: Record<string, string[]> }) | null;
   if (!response.ok || !payload) {
-    throw new ApiError(payload?.message || `API request failed (${response.status}).`, response.status);
+    // Validation errors: show the first field message; 429 is the rate limit.
+    const firstError = payload?.errors ? Object.values(payload.errors)[0]?.[0] : undefined;
+    const message = response.status === 429 ? 'Previše zahtjeva, pokušajte ponovo za minutu.' : firstError || payload?.message;
+    throw new ApiError(message || `API request failed (${response.status}).`, response.status);
   }
   return payload;
 };
@@ -44,6 +49,12 @@ export const api = {
     return (await request<Article[]>(`/posts?${query}`)).data;
   },
   post: async (idOrSlug: string): Promise<Article> => (await request<Article>(`/posts/${encodeURIComponent(idOrSlug)}`)).data,
+  comments: async (postId: string): Promise<Comment[]> =>
+    (await request<Comment[]>(`/posts/${encodeURIComponent(postId)}/comments`)).data,
+  addComment: async (postId: string, comment: { author: string; body: string; parentId?: number; website?: string }): Promise<Comment> =>
+    (await request<Comment>(`/posts/${encodeURIComponent(postId)}/comments`, { method: 'POST', body: comment })).data,
+  likeComment: async (id: number, liked: boolean): Promise<number> =>
+    (await request<{ id: number; likes: number }>(`/comments/${id}/like`, { method: liked ? 'POST' : 'DELETE' })).data.likes,
   quizzes: async (): Promise<{ quizzes: QuizSummary[]; today: string }> => {
     const payload = await request<QuizSummary[]>('/quizzes') as Envelope<QuizSummary[]> & { today: string };
     return { quizzes: payload.data, today: payload.today };

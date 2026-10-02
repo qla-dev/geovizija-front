@@ -48,3 +48,13 @@ export interface QuizQuestion {
 export interface Quiz extends QuizSummary {
   questions: QuizQuestion[];
 }
+
+export interface Comment {
+  id: number;
+  parentId: number | null;
+  author: string;
+  body: string;
+  likes: number;
+  createdAt: string; // ISO 8601
+  replies: Comment[];
+}

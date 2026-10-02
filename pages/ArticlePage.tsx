@@ -2,10 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
-import { Clock, ArrowLeft, ArrowRightLeft, MessageSquare, ThumbsUp, MousePointerClick } from 'lucide-react';
+import { Clock, ArrowLeft, ArrowRightLeft, MousePointerClick } from 'lucide-react';
 import { ShareBar } from '../components/ShareBar';
 import { AdSlot } from '../components/AdSlot';
 import { SEO } from '../components/SEO';
+import { Comments } from '../components/Comments';
 
 export const ArticlePage: React.FC = () => {
   const { articles: allArticles, categories: allCategories } = useContent();
@@ -13,13 +14,6 @@ export const ArticlePage: React.FC = () => {
   const navigate = useNavigate();
   const article = allArticles.find(a => a.id === id);
   
-
-  // Mock Comment State
-  const [comments, setComments] = useState([
-    { id: 1, user: 'Marko H.', date: 'Prije 2 sata', text: 'Nevjerojatno je koliko malo znamo o našim vlastitim šumama. Odličan tekst!', likes: 14 },
-    { id: 2, user: 'Lana Juric', date: 'Prije 4 sata', text: 'Nadam se da će se zaštita podići na višu razinu prije nego bude prekasno.', likes: 8 },
-  ]);
-  const [commentInput, setCommentInput] = useState('');
 
   // Filter related articles for the sidebar
   const relatedArticles = allArticles
@@ -44,19 +38,6 @@ export const ArticlePage: React.FC = () => {
       </div>
     );
   }
-
-  const handlePostComment = () => {
-      if(!commentInput.trim()) return;
-      const newComment = {
-          id: comments.length + 1,
-          user: 'Gost',
-          date: 'Upravo sada',
-          text: commentInput,
-          likes: 0
-      };
-      setComments([newComment, ...comments]);
-      setCommentInput('');
-  };
 
   const categoryName = allCategories.find(c => c.id === article.categoryId)?.name || 'Vijesti';
 
@@ -181,66 +162,7 @@ export const ArticlePage: React.FC = () => {
 
             <AdSlot placement="bottom" className="mt-8" />
 
-            {/* COMMENTING MECHANISM */}
-            <div className="mt-16">
-                <div className="flex items-center gap-3 mb-8">
-                    <MessageSquare size={24} className="text-geo-green" />
-                    <h3 className="font-serif font-bold text-2xl text-stone-900">Rasprava <span className="text-stone-400 text-lg font-normal">({comments.length})</span></h3>
-                </div>
-
-                {/* Input Area */}
-                <div className="mb-12 bg-white rounded-sm">
-                    <div className="relative">
-                        <textarea 
-                            value={commentInput}
-                            onChange={(e) => setCommentInput(e.target.value)}
-                            placeholder="Vaše mišljenje je važno. Napišite komentar..."
-                            className="w-full bg-stone-50 border border-stone-200 p-6 min-h-[120px] focus:outline-none focus:border-geo-green focus:bg-white transition-all resize-y text-stone-700 placeholder-stone-400 font-serif text-lg"
-                        />
-                        <div className="absolute bottom-4 right-4">
-                             <button 
-                                onClick={handlePostComment}
-                                disabled={!commentInput.trim()}
-                                className="bg-stone-900 text-white px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-geo-green hover:text-stone-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                             >
-                                Objavi
-                             </button>
-                        </div>
-                    </div>
-                    <p className="text-[10px] text-stone-400 mt-2 uppercase tracking-wide">
-                        Komentari prolaze automatsku moderaciju.
-                    </p>
-                </div>
-
-                {/* Comments List */}
-                <div className="space-y-10">
-                    {comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-4 group animate-fade-in">
-                            <div className="w-10 h-10 rounded-full bg-stone-200 flex-shrink-0 flex items-center justify-center text-stone-500 font-bold font-serif border-2 border-white shadow-sm">
-                                {comment.user.charAt(0)}
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex items-baseline justify-between mb-2">
-                                    <h4 className="font-bold text-stone-900 text-sm">{comment.user}</h4>
-                                    <span className="text-xs text-stone-400 font-medium">{comment.date}</span>
-                                </div>
-                                <p className="text-stone-600 text-base leading-relaxed mb-3 font-serif">
-                                    {comment.text}
-                                </p>
-                                <div className="flex items-center gap-6">
-                                    <button className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-stone-400 hover:text-geo-green transition-colors">
-                                        <ThumbsUp size={14} />
-                                        <span>{comment.likes > 0 ? comment.likes : 'Sviđa mi se'}</span>
-                                    </button>
-                                    <button className="text-xs font-bold uppercase tracking-wider text-stone-400 hover:text-stone-900 transition-colors">
-                                        Odgovori
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <Comments postId={article.id} />
 
             {/* SUGGESTED ARTICLES ("Možda vas zanima") */}
             <div className="mt-10 md:mt-16 pt-8 border-t border-stone-200">
