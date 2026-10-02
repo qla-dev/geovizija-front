@@ -78,7 +78,7 @@ const CommentForm: React.FC<{
         onChange={(e) => onAuthorChange(e.target.value)}
         placeholder="Vaše ime"
         maxLength={60}
-        className="w-full sm:w-72 mb-3 bg-stone-50 border border-stone-200 px-4 py-3 text-sm text-stone-700 placeholder-stone-400 focus:outline-none focus:border-geo-green focus:bg-white transition-all"
+        className="w-full sm:w-72 mb-3 bg-stone-50 border border-stone-200 px-4 py-3 text-base text-stone-700 placeholder-stone-400 focus:outline-none focus:border-geo-green focus:bg-white transition-all"
       />
       {/* Honeypot: invisible to people, bots fill it and get rejected */}
       <input
@@ -96,7 +96,7 @@ const CommentForm: React.FC<{
           onChange={(e) => setBody(e.target.value)}
           placeholder={placeholder}
           maxLength={2000}
-          className={`w-full bg-stone-50 border border-stone-200 p-6 pb-16 ${compact ? 'min-h-[100px] text-base' : 'min-h-[120px] text-lg'} focus:outline-none focus:border-geo-green focus:bg-white transition-all resize-y text-stone-700 placeholder-stone-400 font-serif`}
+          className={`w-full bg-stone-50 border border-stone-200 px-4 pt-3 pb-16 text-base ${compact ? 'min-h-[100px]' : 'min-h-[120px]'} focus:outline-none focus:border-geo-green focus:bg-white transition-all resize-y text-stone-700 placeholder-stone-400`}
         />
         <div className="absolute bottom-4 right-4 flex items-center gap-3">
           {onCancel && (
