@@ -35,7 +35,8 @@ $fetch = function (string $path): ?array {
 
 $meta = null;
 if (preg_match('/^[a-z0-9-]{1,191}$/', $slug)) {
-    if ($type === 'article' && ($post = $fetch('/posts/'.$slug))) {
+    // /preview also answers for scheduled articles: Facebook reads a scheduled Page post's preview when it is created.
+    if ($type === 'article' && ($post = $fetch('/posts/'.$slug.'/preview'))) {
         $meta = [
             'type' => 'article',
             'url' => SITE.'/article/'.$post['slug'],
