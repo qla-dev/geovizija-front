@@ -143,14 +143,14 @@ export const HomePage: React.FC = () => {
 
         {/* Sidebar News */}
         <div className="lg:col-span-1 bg-white px-4 py-6 md:p-8 flex flex-col h-full border-l border-stone-200">
-          <div className="flex items-center justify-between mb-6 border-b-2 border-geo-green pb-2">
+          <div className="flex items-center justify-between mb-2 border-b-2 border-geo-green pb-2">
             <h4 className="font-serif font-black text-stone-900 uppercase tracking-widest text-sm">
               Najnovije
             </h4>
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
           </div>
           
-          <div className="flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar flex-1">
+          <div className="flex flex-col overflow-y-auto pr-2 custom-scrollbar flex-1">
             {sidebarArticles.map((article) => (
               <ArticleCard key={article.id} article={article} variant="compact" />
             ))}
