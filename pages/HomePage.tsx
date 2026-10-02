@@ -86,7 +86,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className="animate-fade-in bg-stone-100">
       <SEO 
-        title="Geovizija | Ekološki Portal" 
+        title="Geovizija | Ekološki zabavnik za sve uzraste" 
         description="Vaš prozor u svijet prirode. Najnovije vijesti o ekologiji, putovanjima i tehnologiji."
       />
       
