@@ -108,7 +108,7 @@ export const ArticlePage: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 md:pt-12 md:pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* LEFT COLUMN: ARTICLE CONTENT */}
