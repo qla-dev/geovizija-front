@@ -42,7 +42,8 @@ if (preg_match('/^[a-z0-9-]{1,191}$/', $slug)) {
             'url' => SITE.'/article/'.$post['slug'],
             'title' => $post['title'].' | Geovizija',
             'description' => $post['excerpt'],
-            'image' => $post['imageUrl'] ?: null,
+            // The 1200x630 link image with the title on it (backend InstagramStory::facebook), else the cover.
+            'image' => ($post['shareImageUrl'] ?? null) ?: ($post['imageUrl'] ?: null),
             'extra' => array_filter([
                 // Known size lets Facebook show the large preview on the first share.
                 'og:image:width' => $post['imageWidth'] ?? null,
