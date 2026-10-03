@@ -10,6 +10,8 @@ import { QuizHomePage } from './pages/QuizHomePage';
 import { QuizPlayPage } from './pages/QuizPlayPage';
 import { PublishPage } from './pages/PublishPage';
 import { PrivacyPage } from './pages/PrivacyPage';
+import { AdminPage } from './pages/AdminPage';
+import { API_BASE_URL } from './services/api';
 
 // Scroll to top component that listens to location changes
 const ScrollToTop = () => {
@@ -22,11 +24,32 @@ const ScrollToTop = () => {
   return null;
 }
 
-const App: React.FC = () => {
-  return (
-    <Router>
-      <ScrollToTop />
-      <ContentProvider>
+// Counts every page shown (admin statistics): a beacon to the backend on each route change.
+// text/plain keeps it a simple request (no CORS preflight); the browser id is random, kept locally.
+const PageTracker = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname.startsWith('/admin') || !navigator.sendBeacon) return;
+    let visitor = '';
+    try {
+      visitor = localStorage.getItem('geo-visitor') || '';
+      if (!visitor) {
+        visitor = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        localStorage.setItem('geo-visitor', visitor);
+      }
+    } catch {
+      visitor = 'anon';
+    }
+    const body = JSON.stringify({ p: pathname, r: document.referrer, v: visitor });
+    navigator.sendBeacon(`${API_BASE_URL}/track`, new Blob([body], { type: 'text/plain' }));
+  }, [pathname]);
+
+  return null;
+};
+
+const Site: React.FC = () => (
+  <ContentProvider>
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -40,7 +63,19 @@ const App: React.FC = () => {
           <Route path="*" element={<div className="p-10 text-center">404 - Stranica nije pronađena</div>} />
         </Routes>
       </Layout>
-      </ContentProvider>
+  </ContentProvider>
+);
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <ScrollToTop />
+      <PageTracker />
+      <Routes>
+        {/* The admin panel stands alone, without the site's header, footer and content loading. */}
+        <Route path="/admin/*" element={<AdminPage />} />
+        <Route path="*" element={<Site />} />
+      </Routes>
     </Router>
   );
 };

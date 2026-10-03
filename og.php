@@ -33,6 +33,24 @@ $fetch = function (string $path): ?array {
     return is_array($json['data'] ?? null) ? $json['data'] : null;
 };
 
+/**
+ * "Klikni više za čitav članak „title“", at most 70 characters (about what Facebook shows on one or two
+ * lines): a longer title is cut at a word boundary and ends with "…" inside the quotes.
+ */
+function og_share_title(string $title, int $max = 70): string
+{
+    $prefix = 'Klikni više za čitav članak „';
+    $room = $max - mb_strlen($prefix) - 1;
+    $title = trim($title);
+    if (mb_strlen($title) > $room) {
+        $cut = mb_substr($title, 0, $room - 1);
+        $space = mb_strrpos($cut, ' ');
+        $title = rtrim($space > $room / 2 ? mb_substr($cut, 0, $space) : $cut, " ,.;:-–").'…';
+    }
+
+    return $prefix.$title.'“';
+}
+
 $meta = null;
 if (preg_match('/^[a-z0-9-]{1,191}$/', $slug)) {
     // /preview also answers for scheduled articles: Facebook reads a scheduled Page post's preview when it is created.
@@ -41,6 +59,8 @@ if (preg_match('/^[a-z0-9-]{1,191}$/', $slug)) {
             'type' => 'article',
             'url' => SITE.'/article/'.$post['slug'],
             'title' => $post['title'].' | Geovizija',
+            // The bold line under the Facebook link image (the title itself is already on the image).
+            'shareTitle' => og_share_title($post['title']),
             'description' => $post['excerpt'],
             // The 1200x630 link image with the title on it (backend InstagramStory::facebook), else the cover.
             'image' => ($post['shareImageUrl'] ?? null) ?: ($post['imageUrl'] ?: null),
@@ -81,11 +101,11 @@ $tags = [
     '<meta property="og:site_name" content="Geovizija" />',
     '<meta property="og:locale" content="bs_BA" />',
     '<meta property="og:url" content="'.$e($meta['url']).'" />',
-    '<meta property="og:title" content="'.$e($meta['title']).'" />',
+    '<meta property="og:title" content="'.$e($meta['shareTitle'] ?? $meta['title']).'" />',
     '<meta property="og:description" content="'.$e($meta['description']).'" />',
     '<meta property="og:image" content="'.$e($image).'" />',
     '<meta name="twitter:card" content="summary_large_image" />',
-    '<meta name="twitter:title" content="'.$e($meta['title']).'" />',
+    '<meta name="twitter:title" content="'.$e($meta['shareTitle'] ?? $meta['title']).'" />',
     '<meta name="twitter:description" content="'.$e($meta['description']).'" />',
     '<meta name="twitter:image" content="'.$e($image).'" />',
 ];

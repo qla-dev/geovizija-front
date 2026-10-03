@@ -28,8 +28,12 @@ export const PrivacyPage: React.FC = () => (
         <p>Kada ostavite komentar, spremamo ime koje ste upisali, tekst komentara i vrijeme objave; ime i komentar su javno vidljivi uz članak. Radi zaštite od spama i zloupotrebe spremamo i jednosmjerno šifrovani (hash) otisak vaše IP adrese, iz kojeg se sama adresa ne može pročitati. Komentari prolaze automatsku moderaciju i možemo ih ukloniti.</p>
       </Section>
 
+      <Section title="Statistika posjeta">
+        <p>Da bismo znali koliko se čita koji članak, pri svakom otvaranju stranice spremamo: koju stranicu ste otvorili, vrijeme, vrstu uređaja (mobitel ili računar), s koje stranice ste došli (samo naziv domene), slučajni broj preglednika iz kojeg se ne može saznati ko ste, te vašu IP adresu. IP adresu brišemo nakon 30 dana; ostaju samo brojke. Ove podatke ne dijelimo ni sa kim i koristimo ih samo za vlastitu statistiku.</p>
+      </Section>
+
       <Section title="Podaci u vašem pregledniku">
-        <p>Neke postavke čuvamo samo u vašem pregledniku (localStorage), ne na našem serveru: ime za komentare, komentare koje ste označili sa „sviđa mi se”, rezultate kviza i način prikaza liste članaka. Možete ih obrisati brisanjem podataka stranice u pregledniku.</p>
+        <p>Neke postavke čuvamo samo u vašem pregledniku (localStorage), ne na našem serveru: ime za komentare, komentare koje ste označili sa „sviđa mi se”, rezultate kviza, način prikaza liste članaka i slučajni broj preglednika za statistiku posjeta. Možete ih obrisati brisanjem podataka stranice u pregledniku.</p>
       </Section>
 
       <Section title="Oglasi i kolačići (Google AdSense)">
