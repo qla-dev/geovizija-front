@@ -150,7 +150,8 @@ export const ArticlePage: React.FC = () => {
                     return (
                       <figure key={index} className="my-8 -mx-4 sm:mx-0 not-prose">
                         <img src={image[2]} alt={image[1]} loading="lazy" className="w-full aspect-video object-cover bg-stone-200" />
-                        {image[1] && <figcaption className="px-4 sm:px-0 mt-2 text-sm font-sans text-stone-500 leading-snug">{image[1]}</figcaption>}
+                        {/* Captions temporarily hidden (not relevant enough); remove `false &&` to restore. */}
+                        {false && image[1] && <figcaption className="px-4 sm:px-0 mt-2 text-sm font-sans text-stone-500 leading-snug">{image[1]}</figcaption>}
                       </figure>
                     );
                   }
