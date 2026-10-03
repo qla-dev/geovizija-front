@@ -737,7 +737,7 @@ export const AdminPage: React.FC = () => {
         <button onClick={logout} className="p-2 md:hidden" aria-label="Odjava"><LogOut size={18} /></button>
       </header>
 
-      <main className="max-w-3xl mx-auto p-4 md:max-w-6xl md:mx-0 md:p-4" key={`${tab}-${reloadKey}`}>
+      <main className="max-w-3xl mx-auto p-4 md:max-w-none md:mx-0 md:p-4" key={`${tab}-${reloadKey}`}>
         {tab === 'stats' && <StatsTab onOpen={setOpenPost} />}
         {tab === 'posts' && <PostsTab onOpen={setOpenPost} reloadKey={reloadKey} />}
         {tab === 'suggestions' && <SuggestionsTab />}
