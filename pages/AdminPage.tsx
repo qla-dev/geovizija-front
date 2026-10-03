@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { BarChart3, ExternalLink, FileText, Lightbulb, LogOut, Mic, MicOff, Pencil, Plus, RefreshCw, Search, Trash2, X } from 'lucide-react';
+import { BarChart3, CalendarClock, ExternalLink, FileText, Lightbulb, LogOut, Mic, MicOff, Pause, Pencil, Play, Plus, RefreshCw, Search, Trash2, X } from 'lucide-react';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import { API_BASE_URL } from '../services/api';
 
 // Admin panel (/admin): statistics, all articles (with drafts and scheduled ones) and topic suggestions
@@ -10,7 +12,7 @@ const TOKEN_KEY = 'geo-admin-token';
 type Status = 'published' | 'scheduled' | 'draft';
 interface AdminPost {
   id: number; slug: string; title: string; excerpt: string; category: string | null; imageUrl: string | null;
-  publishedAt: string | null; status: Status; views: number;
+  publishedAt: string | null; status: Status; paused?: boolean; views: number;
   facebook: 'shared' | 'failed' | null; facebookError: string | null; instagram: string | null; instagramError: string | null;
   content?: string;
   edit?: { categorySlug: string | null; content: string; author: string | null; featured: boolean };
@@ -385,15 +387,11 @@ const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => v
   }, [id]);
   useEffect(load, [load]);
 
-  const remove = async () => {
-    if (!post || !window.confirm(`Obrisati "${post.title}"? Ovo se ne može vratiti.`)) return;
-    try {
-      await call(`/posts/${post.id}`, { method: 'DELETE' });
-      onDeleted();
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  };
+  const [ask, setAsk] = useState<Ask | null>(null);
+  const remove = () => post && setAsk(deleteAsk(post, problems => {
+    if (problems.length) window.alert(`Članak je obrisan, ali: ${problems.join(' ')}`);
+    onDeleted();
+  }));
 
   return (
     <div className="fixed inset-0 md:left-56 z-50 bg-white overflow-y-auto">
@@ -407,6 +405,7 @@ const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => v
         {post && <button onClick={remove} className="p-2 text-red-600" aria-label="Obriši"><Trash2 size={20} /></button>}
       </div>
       {error && <p className="text-red-600 text-sm p-4">{error}</p>}
+      {ask && <ConfirmDialog ask={ask} onDone={() => setAsk(null)} />}
       {post && editing && (
         <PostEditor post={post} onCancel={() => setEditing(false)} onSaved={() => { setEditing(false); load(); onSaved(); }} />
       )}
@@ -415,6 +414,7 @@ const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => v
           {post.imageUrl && <img src={post.imageUrl} alt="" className="w-full rounded-2xl mb-4" />}
           <div className="flex flex-wrap gap-2 text-xs mb-3">
             <span className={`px-2 py-1 rounded-full font-bold ${STATUS[post.status].className}`}>{STATUS[post.status].label}</span>
+            {post.paused && <span className="px-2 py-1 rounded-full font-bold bg-amber-100 text-amber-800">Pauzirano</span>}
             {post.category && <span className="px-2 py-1 rounded-full bg-stone-100 font-semibold">{post.category}</span>}
             <span className="px-2 py-1 rounded-full bg-stone-100">{sarajevo(post.publishedAt)}</span>
             <span className="px-2 py-1 rounded-full bg-stone-100 font-bold">{post.views} pregleda</span>
@@ -429,6 +429,156 @@ const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => v
           {post.content && renderContent(post.content)}
         </article>
       )}
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------- article actions (schedule, pause, delete)
+
+// The site's own month names (as on articles), week from Monday.
+const BOSNIAN = {
+  firstDayOfWeek: 1,
+  weekdays: {
+    shorthand: ['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'] as [string, string, string, string, string, string, string],
+    longhand: ['Nedjelja', 'Ponedjeljak', 'Utorak', 'Srijeda', 'Četvrtak', 'Petak', 'Subota'] as [string, string, string, string, string, string, string],
+  },
+  months: {
+    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'] as [string, string, string, string, string, string, string, string, string, string, string, string],
+    longhand: ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Juni', 'Juli', 'August', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'] as [string, string, string, string, string, string, string, string, string, string, string, string],
+  },
+  time_24hr: true,
+};
+
+const Modal: React.FC<{ children: React.ReactNode; onClose: () => void }> = ({ children, onClose }) => (
+  <div className="fixed inset-0 z-[60] bg-black/40 flex items-end sm:items-center justify-center p-3" onClick={onClose}>
+    <div className="w-full max-w-sm bg-white rounded-2xl p-4 space-y-3 shadow-xl" onClick={e => e.stopPropagation()}>{children}</div>
+  </div>
+);
+
+interface Ask { title: string; text: string; confirm: string; danger?: boolean; run: () => Promise<void> }
+
+const ConfirmDialog: React.FC<{ ask: Ask; onDone: () => void }> = ({ ask, onDone }) => {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const go = async () => {
+    setBusy(true);
+    try {
+      await ask.run();
+      onDone();
+    } catch (e) {
+      setError((e as Error).message);
+      setBusy(false);
+    }
+  };
+  return (
+    <Modal onClose={() => !busy && onDone()}>
+      <h3 className="font-bold">{ask.title}</h3>
+      <p className="text-sm text-stone-600">{ask.text}</p>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      <div className="flex gap-2">
+        <button onClick={onDone} disabled={busy} className="flex-1 py-2.5 rounded-xl border border-stone-300 font-semibold text-sm">Odustani</button>
+        <button onClick={go} disabled={busy} className={`flex-1 py-2.5 rounded-xl text-white font-bold text-sm disabled:opacity-50 ${ask.danger ? 'bg-red-600' : 'bg-geo-green'}`}>
+          {busy ? '…' : ask.confirm}
+        </button>
+      </div>
+    </Modal>
+  );
+};
+
+const ScheduleDialog: React.FC<{ post: AdminPost; onPick: (date: Date) => void; onClose: () => void }> = ({ post, onPick, onClose }) => {
+  const holder = useRef<HTMLInputElement>(null);
+  const [date, setDate] = useState<Date>(() => {
+    const current = post.publishedAt ? new Date(post.publishedAt) : null;
+    return current && current > new Date() ? current : new Date(Date.now() + 60 * 60000);
+  });
+
+  useEffect(() => {
+    if (!holder.current) return;
+    const picker = flatpickr(holder.current, {
+      inline: true, enableTime: true, time_24hr: true, minuteIncrement: 5, defaultDate: date,
+      locale: BOSNIAN, onChange: ([picked]) => picked && setDate(picked),
+    });
+    return () => picker.destroy();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <Modal onClose={onClose}>
+      <h3 className="font-bold">Zakaži objavu</h3>
+      <p className="text-xs text-stone-500 line-clamp-2">{post.title}</p>
+      <div className="flex justify-center"><input ref={holder} className="hidden" /></div>
+      <p className="text-sm text-center font-semibold">{sarajevo(date.toISOString())}</p>
+      <div className="flex gap-2">
+        <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-stone-300 font-semibold text-sm">Odustani</button>
+        <button onClick={() => onPick(date)} className="flex-1 py-2.5 rounded-xl bg-geo-green text-white font-bold text-sm">Zakaži</button>
+      </div>
+    </Modal>
+  );
+};
+
+/** What Meta answered on delete / pause, when it did not go through. */
+const metaProblems = (r: { facebook?: { status: string; message: string }; instagram?: { status: string; message: string } } | undefined) =>
+  [r?.facebook, r?.instagram].filter(x => x?.status === 'failed').map(x => x!.message);
+
+const deleteAsk = (post: AdminPost, onDone: (problems: string[]) => void): Ask => ({
+  title: 'Obrisati članak?',
+  text: `„${post.title}“ se briše zauvijek${post.facebook === 'shared' || post.instagram === 'posted' ? ', zajedno sa objavama na Facebooku i Instagramu' : ''}. Ovo se ne može vratiti.`,
+  confirm: 'Obriši', danger: true,
+  run: async () => onDone(metaProblems(await call(`/posts/${post.id}`, { method: 'DELETE' }))),
+});
+
+const PostActions: React.FC<{ post: AdminPost; onChanged: (notice?: string) => void }> = ({ post, onChanged }) => {
+  const [ask, setAsk] = useState<Ask | null>(null);
+  const [scheduling, setScheduling] = useState(false);
+  const live = post.status === 'published';
+  const stop = (fn: () => void) => (e: React.MouseEvent) => { e.stopPropagation(); fn(); };
+
+  const reschedule = (date: Date) => {
+    setScheduling(false);
+    const now = date <= new Date();
+    setAsk({
+      title: now ? 'Objaviti odmah?' : 'Zakazati objavu?',
+      text: now
+        ? `„${post.title}“ će odmah biti objavljen na sajtu i Facebooku, a na Instagramu za minutu.`
+        : `„${post.title}“ će biti objavljen ${sarajevo(date.toISOString())}${post.paused ? ' (ali ostaje pauziran dok ga ne pokreneš)' : ''}.`,
+      confirm: now ? 'Objavi' : 'Zakaži',
+      run: async () => { await call(`/posts/${post.id}`, { method: 'PUT', body: { published_at: date.toISOString() } }); onChanged(); },
+    });
+  };
+
+  const togglePause = () => setAsk(post.paused
+    ? {
+      title: 'Pokrenuti ponovo?',
+      text: post.publishedAt && new Date(post.publishedAt) <= new Date()
+        ? `Vrijeme objave je prošlo, pa „${post.title}“ izlazi odmah: sajt i Facebook sada, Instagram za minutu.`
+        : `„${post.title}“ će biti objavljen ${sarajevo(post.publishedAt)}, kako je zakazano.`,
+      confirm: 'Pokreni',
+      run: async () => { await call(`/posts/${post.id}/resume`, { method: 'POST' }); onChanged(); },
+    }
+    : {
+      title: 'Pauzirati?',
+      text: `„${post.title}“ neće biti objavljen ni kad dođe vrijeme (ni na Facebooku ni na Instagramu) dok ga ne pokreneš ponovo. Ostaje među zakazanima.`,
+      confirm: 'Pauziraj',
+      run: async () => { onChanged(metaProblems(await call(`/posts/${post.id}/pause`, { method: 'POST' })).join(' ') || undefined); },
+    });
+
+  const button = 'p-1.5 rounded-lg bg-white/90 border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-stone-50';
+  // Clicks here (and in the dialogs, rendered inside the card) must not open the article.
+  return (
+    <div onClick={e => e.stopPropagation()}>
+      <div className="flex gap-1">
+        {!live && <button onClick={stop(() => setScheduling(true))} className={button} title="Zakaži" aria-label="Zakaži"><CalendarClock size={16} /></button>}
+        {post.status === 'scheduled' && (
+          <button onClick={stop(togglePause)} className={`${button} ${post.paused ? '!text-amber-700 !border-amber-300 !bg-amber-50' : ''}`}
+            title={post.paused ? 'Pokreni' : 'Pauziraj'} aria-label={post.paused ? 'Pokreni' : 'Pauziraj'}>
+            {post.paused ? <Play size={16} /> : <Pause size={16} />}
+          </button>
+        )}
+        <button onClick={stop(() => setAsk(deleteAsk(post, problems => onChanged(problems.join(' ') || undefined))))}
+          className={`${button} hover:!text-red-600`} title="Obriši" aria-label="Obriši"><Trash2 size={16} /></button>
+      </div>
+      {scheduling && <ScheduleDialog post={post} onPick={reschedule} onClose={() => setScheduling(false)} />}
+      {ask && <ConfirmDialog ask={ask} onDone={() => setAsk(null)} />}
     </div>
   );
 };
@@ -467,6 +617,13 @@ const PostsTab: React.FC<{ onOpen: (id: number) => void; reloadKey: number }> = 
     return () => window.clearTimeout(timer);
   }, [load, reloadKey]);
 
+  // After a card action: reload, and show what Meta refused (e.g. an Instagram post it would not delete).
+  const [notice, setNotice] = useState('');
+  const changed = (problem?: string) => {
+    setNotice(problem ?? '');
+    load(1);
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
@@ -484,16 +641,22 @@ const PostsTab: React.FC<{ onOpen: (id: number) => void; reloadKey: number }> = 
         <span className="ml-auto text-sm text-stone-500 self-center whitespace-nowrap">{total} članaka</span>
       </div>
       {error && <p className="text-red-600 text-sm">{error}</p>}
+      {notice && <p className="text-amber-800 bg-amber-50 border border-amber-200 rounded-xl text-sm p-2">{notice}</p>}
       <div className="space-y-2 md:space-y-0 md:grid md:grid-cols-2 xl:grid-cols-3 md:gap-2">
         {posts.map(post => (
-          <button key={post.id} onClick={() => onOpen(post.id)} className="w-full flex gap-3 bg-white border border-stone-200 rounded-2xl p-2 text-left">
+          <div key={post.id} role="button" tabIndex={0} onClick={() => onOpen(post.id)} onKeyDown={e => e.key === 'Enter' && onOpen(post.id)}
+            className="relative w-full flex gap-3 bg-white border border-stone-200 rounded-2xl p-2 text-left cursor-pointer hover:border-stone-300">
+            <div className="absolute top-2 right-2">
+              <PostActions post={post} onChanged={changed} />
+            </div>
             <div className="w-20 h-20 rounded-xl bg-stone-200 overflow-hidden flex-shrink-0">
               {post.imageUrl && <img src={post.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />}
             </div>
             <div className="flex-1 min-w-0 py-0.5">
-              <div className="font-bold text-sm leading-snug line-clamp-2">{post.title}</div>
+              <div className="font-bold text-sm leading-snug line-clamp-2 pr-24">{post.title}</div>
               <div className="flex flex-wrap items-center gap-1.5 mt-1.5 text-[11px]">
                 <span className={`px-1.5 py-0.5 rounded-full font-bold ${STATUS[post.status].className}`}>{STATUS[post.status].label}</span>
+                {post.paused && <span className="px-1.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">Pauzirano</span>}
                 <span className="text-stone-500">{sarajevo(post.publishedAt)}</span>
                 <span className="text-stone-700 font-bold">{post.views} 👁</span>
                 {post.facebook === 'failed' && <span className="text-red-600 font-bold">FB ✕</span>}
@@ -502,7 +665,7 @@ const PostsTab: React.FC<{ onOpen: (id: number) => void; reloadKey: number }> = 
               </div>
               {post.category && <div className="text-[11px] text-stone-500 mt-1">{post.category}</div>}
             </div>
-          </button>
+          </div>
         ))}
       </div>
       {page < lastPage && (

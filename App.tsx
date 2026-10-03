@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { ContentProvider } from './components/ContentProvider';
@@ -10,7 +10,8 @@ import { QuizHomePage } from './pages/QuizHomePage';
 import { QuizPlayPage } from './pages/QuizPlayPage';
 import { PublishPage } from './pages/PublishPage';
 import { PrivacyPage } from './pages/PrivacyPage';
-import { AdminPage } from './pages/AdminPage';
+// Loaded only on /admin, so visitors do not download the panel (and its date picker).
+const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
 import { API_BASE_URL } from './services/api';
 
 // Scroll to top component that listens to location changes
@@ -73,7 +74,7 @@ const App: React.FC = () => {
       <PageTracker />
       <Routes>
         {/* The admin panel stands alone, without the site's header, footer and content loading. */}
-        <Route path="/admin/*" element={<AdminPage />} />
+        <Route path="/admin/*" element={<Suspense fallback={null}><AdminPage /></Suspense>} />
         <Route path="*" element={<Site />} />
       </Routes>
     </Router>
