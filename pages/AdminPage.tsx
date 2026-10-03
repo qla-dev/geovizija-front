@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { BarChart3, ExternalLink, FileText, Lightbulb, LogOut, Mic, MicOff, Plus, RefreshCw, Search, Trash2, X } from 'lucide-react';
+import { BarChart3, ExternalLink, FileText, Lightbulb, LogOut, Mic, MicOff, Pencil, Plus, RefreshCw, Search, Trash2, X } from 'lucide-react';
 import { API_BASE_URL } from '../services/api';
 
 // Admin panel (/admin): statistics, all articles (with drafts and scheduled ones) and topic suggestions
@@ -13,7 +13,9 @@ interface AdminPost {
   publishedAt: string | null; status: Status; views: number;
   facebook: 'shared' | 'failed' | null; facebookError: string | null; instagram: string | null; instagramError: string | null;
   content?: string;
+  edit?: { categorySlug: string | null; content: string; author: string | null; featured: boolean };
 }
+interface CategoryOption { id: string; name: string }
 interface Totals { views: number; visitors: number }
 interface Stats {
   days: number; live: { visitors5min: number; views30min: number }; today: Totals; week: Totals; month: Totals;
@@ -236,13 +238,152 @@ const renderContent = (content: string) => content.split(/\n+/).map(l => l.trim(
   return <p key={i} className="mb-3 leading-relaxed text-stone-800">{block}</p>;
 });
 
-const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => void }> = ({ id, onClose, onDeleted }) => {
-  const [post, setPost] = useState<AdminPost | null>(null);
+// A scheduled article's Page post is a scheduled Facebook post, not yet shared.
+const facebookLabel = (post: AdminPost) => post.facebook === 'shared'
+  ? (post.status === 'scheduled' ? 'zakazano' : 'objavljeno')
+  : post.facebook === 'failed' ? 'greška' : '—';
+
+// <input type="datetime-local"> works in the browser's own time zone.
+const toLocalInput = (iso: string | null) => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+};
+
+const field = 'w-full border border-stone-300 rounded-xl px-3 py-2 text-base';
+
+const PostEditor: React.FC<{ post: AdminPost; onCancel: () => void; onSaved: () => void }> = ({ post, onCancel, onSaved }) => {
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [title, setTitle] = useState(post.title);
+  const [excerpt, setExcerpt] = useState(post.excerpt ?? '');
+  const [category, setCategory] = useState(post.edit?.categorySlug ?? '');
+  const [content, setContent] = useState(post.edit?.content ?? post.content ?? '');
+  const [author, setAuthor] = useState(post.edit?.author ?? '');
+  const [featured, setFeatured] = useState(post.edit?.featured ?? false);
+  const [draft, setDraft] = useState(post.status === 'draft');
+  const [publishedAt, setPublishedAt] = useState(toLocalInput(post.publishedAt) || toLocalInput(new Date().toISOString()));
+  const [cover, setCover] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    call<{ data: CategoryOption[] }>('/categories').then(r => setCategories(r.data)).catch(e => setError(e.message));
+  }, []);
+
+  const pickCover = (file: File | undefined) => {
+    if (!file) return;
+    // Shrunk to 2000px JPEG first: a phone photo as base64 can exceed the host's upload limit.
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 2000 / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
+      setCover(canvas.toDataURL('image/jpeg', 0.9));
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => setError('Slika se ne može učitati.');
+    img.src = url;
+  };
+
+  const save = async () => {
+    if (!title.trim() || !content.trim()) {
+      setError('Naslov i tekst ne mogu biti prazni.');
+      return;
+    }
+    if (!draft && post.status === 'draft' && !window.confirm('Članak će biti objavljen (i podijeljen na Facebook/Instagram). Nastaviti?')) return;
+    setBusy(true);
+    setError('');
+    try {
+      // The cover first: publishing a draft needs one.
+      if (cover) await call(`/posts/${post.id}/generate-image`, { method: 'POST', body: { image: cover } });
+      await call(`/posts/${post.id}`, {
+        method: 'PUT',
+        body: {
+          title: title.trim(), excerpt: excerpt.trim(), content, featured, cover_changed: !!cover,
+          ...(category ? { category } : {}),
+          ...(author.trim() ? { author: author.trim() } : {}),
+          // Sent only when changed: the minute-precision input would otherwise drop stored seconds,
+          // which counts as an edit and replaces a scheduled Facebook post for nothing.
+          ...(draft !== (post.status === 'draft') || publishedAt !== toLocalInput(post.publishedAt)
+            ? { published_at: draft ? null : new Date(publishedAt).toISOString() } : {}),
+        },
+      });
+      onSaved();
+    } catch (e) {
+      setError((e as Error).message);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto p-4 pb-16 space-y-4">
+      <label className="block">
+        <span className="text-xs font-bold text-stone-500">Naslovna slika</span>
+        <img src={cover ?? post.imageUrl ?? ''} alt="" className={`w-full rounded-2xl mt-1 bg-stone-100 aspect-video object-cover ${cover || post.imageUrl ? '' : 'hidden'}`} />
+        <input type="file" accept="image/*" onChange={e => pickCover(e.target.files?.[0])} className="mt-2 text-sm" />
+      </label>
+      <label className="block">
+        <span className="text-xs font-bold text-stone-500">Naslov</span>
+        <input value={title} onChange={e => setTitle(e.target.value)} className={`${field} font-bold`} />
+      </label>
+      <label className="block">
+        <span className="text-xs font-bold text-stone-500">Uvod (excerpt)</span>
+        <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} rows={3} className={field} />
+      </label>
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block">
+          <span className="text-xs font-bold text-stone-500">Kategorija</span>
+          <select value={category} onChange={e => setCategory(e.target.value)} className={field}>
+            {!category && <option value="">—</option>}
+            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-xs font-bold text-stone-500">Autor</span>
+          <input value={author} onChange={e => setAuthor(e.target.value)} className={field} />
+        </label>
+      </div>
+      <div className="flex flex-wrap items-center gap-4">
+        <label className="flex items-center gap-2 text-sm font-semibold">
+          <input type="checkbox" checked={draft} onChange={e => setDraft(e.target.checked)} /> Draft
+        </label>
+        {!draft && (
+          <label className="flex items-center gap-2 text-sm">
+            Objava <input type="datetime-local" value={publishedAt} onChange={e => setPublishedAt(e.target.value)} className="border border-stone-300 rounded-lg px-2 py-1.5" />
+          </label>
+        )}
+        <label className="flex items-center gap-2 text-sm font-semibold">
+          <input type="checkbox" checked={featured} onChange={e => setFeatured(e.target.checked)} /> Istaknuto
+        </label>
+      </div>
+      <label className="block">
+        <span className="text-xs font-bold text-stone-500">Tekst</span>
+        <span className="block text-[11px] text-stone-400">Svaki red je odlomak · „## “ podnaslov · „![opis](putanja)“ slika</span>
+        <textarea value={content} onChange={e => setContent(e.target.value)} rows={20} className={`${field} font-serif leading-relaxed`} />
+      </label>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      <div className="flex gap-2 sticky bottom-0 bg-white py-3">
+        <button onClick={onCancel} disabled={busy} className="flex-1 py-3 rounded-xl border border-stone-300 font-semibold">Odustani</button>
+        <button onClick={save} disabled={busy} className="flex-1 py-3 rounded-xl bg-geo-green text-white font-bold disabled:opacity-50">
+          {busy ? 'Spremam…' : 'Spremi'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => void; onSaved: () => void }> = ({ id, onClose, onDeleted, onSaved }) => {
+  const [post, setPost] = useState<AdminPost | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [error, setError] = useState('');
+
+  const load = useCallback(() => {
     call<{ data: AdminPost }>(`/admin/posts/${id}`).then(r => setPost(r.data)).catch(e => setError(e.message));
   }, [id]);
+  useEffect(load, [load]);
 
   const remove = async () => {
     if (!post || !window.confirm(`Obrisati "${post.title}"? Ovo se ne može vratiti.`)) return;
@@ -262,10 +403,14 @@ const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => v
         {post && post.status !== 'draft' && (
           <a href={`/article/${post.slug}`} target="_blank" rel="noopener" className="p-2" aria-label="Otvori na sajtu"><ExternalLink size={20} /></a>
         )}
+        {post && !editing && <button onClick={() => setEditing(true)} className="p-2" aria-label="Uredi"><Pencil size={20} /></button>}
         {post && <button onClick={remove} className="p-2 text-red-600" aria-label="Obriši"><Trash2 size={20} /></button>}
       </div>
       {error && <p className="text-red-600 text-sm p-4">{error}</p>}
-      {post && (
+      {post && editing && (
+        <PostEditor post={post} onCancel={() => setEditing(false)} onSaved={() => { setEditing(false); load(); onSaved(); }} />
+      )}
+      {post && !editing && (
         <article className="max-w-2xl mx-auto p-4 pb-16">
           {post.imageUrl && <img src={post.imageUrl} alt="" className="w-full rounded-2xl mb-4" />}
           <div className="flex flex-wrap gap-2 text-xs mb-3">
@@ -273,7 +418,7 @@ const PostDetail: React.FC<{ id: number; onClose: () => void; onDeleted: () => v
             {post.category && <span className="px-2 py-1 rounded-full bg-stone-100 font-semibold">{post.category}</span>}
             <span className="px-2 py-1 rounded-full bg-stone-100">{sarajevo(post.publishedAt)}</span>
             <span className="px-2 py-1 rounded-full bg-stone-100 font-bold">{post.views} pregleda</span>
-            <span className="px-2 py-1 rounded-full bg-stone-100">FB: {post.facebook ?? '—'}</span>
+            <span className="px-2 py-1 rounded-full bg-stone-100">FB: {facebookLabel(post)}</span>
             <span className="px-2 py-1 rounded-full bg-stone-100">IG: {post.instagram ?? '—'}</span>
           </div>
           {(post.facebookError || post.instagramError) && (
@@ -460,19 +605,21 @@ const SuggestionsTab: React.FC = () => {
         <textarea value={text + (interim ? ` ${interim}` : '')} onChange={e => { setText(e.target.value); setInterim(''); }} rows={4}
           placeholder="Npr. tekst o Tari i rafting sezoni, nešto o risovima u Dinaridima…"
           className="w-full border border-stone-300 rounded-xl px-3 py-2 text-base" />
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Two even rows that fit a phone: dictation + language, then date + save. */}
+        <div className="grid grid-cols-2 gap-2">
           <button onClick={toggleVoice}
-            className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold ${listening ? 'bg-red-600 text-white animate-pulse' : 'bg-stone-900 text-white'}`}>
+            className={`flex items-center justify-center gap-2 h-12 rounded-xl font-bold ${listening ? 'bg-red-600 text-white animate-pulse' : 'bg-stone-900 text-white'}`}>
             {listening ? <><MicOff size={18} /> Zaustavi</> : <><Mic size={18} /> Diktiraj</>}
           </button>
           <select value={lang} onChange={e => { setLang(e.target.value); localStorage.setItem('geo-admin-lang', e.target.value); }}
-            className="border border-stone-300 rounded-xl px-2 py-3 text-sm">
+            className="w-full min-w-0 h-12 border border-stone-300 rounded-xl px-2 text-sm bg-white">
             {LANGS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
-          <label className="flex items-center gap-1 text-sm">
-            za <input type="date" value={forDate} onChange={e => setForDate(e.target.value)} className="border border-stone-300 rounded-lg px-2 py-2" />
+          <label className="flex flex-col justify-center h-12 border border-stone-300 rounded-xl px-3 min-w-0">
+            <span className="text-[10px] font-bold text-stone-500 leading-none">Za dan</span>
+            <input type="date" value={forDate} onChange={e => setForDate(e.target.value)} className="w-full min-w-0 text-sm bg-transparent outline-none" />
           </label>
-          <button onClick={save} disabled={!text.trim()} className="ml-auto px-4 py-3 rounded-xl bg-geo-green text-white font-bold disabled:opacity-40">Spremi</button>
+          <button onClick={save} disabled={!text.trim()} className="h-12 rounded-xl bg-geo-green text-white font-bold disabled:opacity-40">Spremi</button>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
       </Card>
@@ -578,7 +725,8 @@ export const AdminPage: React.FC = () => {
       </nav>
 
       {openPost !== null && (
-        <PostDetail id={openPost} onClose={() => setOpenPost(null)} onDeleted={() => { setOpenPost(null); setReloadKey(k => k + 1); }} />
+        <PostDetail id={openPost} onClose={() => setOpenPost(null)} onDeleted={() => { setOpenPost(null); setReloadKey(k => k + 1); }}
+          onSaved={() => setReloadKey(k => k + 1)} />
       )}
     </div>
   );
