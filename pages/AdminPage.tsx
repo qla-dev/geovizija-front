@@ -696,6 +696,7 @@ export const AdminPage: React.FC = () => {
   };
   const choose = (next: Tab) => {
     setTab(next);
+    setOpenPost(null);
     localStorage.setItem('geo-admin-tab', next);
   };
 
