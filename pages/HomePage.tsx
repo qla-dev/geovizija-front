@@ -172,12 +172,13 @@ export const HomePage: React.FC = () => {
       <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
 
       {/* --- NEW SECTION: MORE FROM GEOVIZIJA (SLIDER) --- */}
-      <section className="bg-black text-white py-8 md:py-12 border-t border-stone-800 overflow-hidden">
+      <section className="bg-stone-950 text-white py-8 md:py-12 border-t border-stone-900 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-xs md:text-sm tracking-[0.2em] uppercase text-stone-100">
-                    Više sa Geovizije
-                </h3>
+                <h2 className="text-3xl md:text-4xl font-serif font-bold flex items-center gap-3">
+                    <span className="w-5 h-8 border-[3px] border-geo-green flex-shrink-0" aria-hidden="true" />
+                    Više sa <span className="text-geo-green">Geovizije</span>
+                </h2>
                 <div className="flex gap-2">
                     <button 
                         onClick={() => scrollSlider('left')} 
