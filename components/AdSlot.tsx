@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // Google AdSense unit. The loader script is in index.html; auto ads are off,
 // so every ad on the site comes from one of these slots.
-//   banner     320x100 on mobile, 728x90 from md
+//   banner     responsive, up to 970px wide - AdSense picks the size, which fills far more often
+//              than a fixed 728x90 / 320x100
 //   rectangle  300x250 (sidebar)
 //   inArticle  fluid in-article unit between paragraphs
 type AdVariant = 'banner' | 'rectangle' | 'inArticle';
@@ -22,7 +23,7 @@ const AD_UNITS: Record<AdPlacement, string> = {
 };
 
 const SIZES: Record<AdVariant, string> = {
-  banner: 'w-[320px] h-[100px] md:w-[728px] md:h-[90px]',
+  banner: 'w-full max-w-[970px]',
   rectangle: 'w-[300px] h-[250px]',
   inArticle: 'w-full min-h-[250px]',
 };
@@ -72,10 +73,11 @@ export const AdSlot: React.FC<{ variant?: AdVariant; placement?: AdPlacement; cl
       <ins
         ref={ref}
         className={`adsbygoogle max-w-full ${SIZES[variant]}`}
-        style={fluid ? { display: 'block', textAlign: 'center' } : { display: 'inline-block' }}
+        style={variant === 'rectangle' ? { display: 'inline-block' } : { display: 'block', textAlign: 'center' }}
         data-ad-client={AD_CLIENT}
         data-ad-slot={AD_UNITS[placement]}
         {...(fluid ? { 'data-ad-layout': 'in-article', 'data-ad-format': 'fluid' } : {})}
+        {...(variant === 'banner' ? { 'data-ad-format': 'auto', 'data-full-width-responsive': 'true' } : {})}
         {...(import.meta.env.DEV ? { 'data-adtest': 'on' } : {})}
       />
     </aside>
