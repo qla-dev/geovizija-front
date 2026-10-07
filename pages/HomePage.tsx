@@ -98,7 +98,8 @@ export const HomePage: React.FC = () => {
       />
       
       {/* --- SECTION 1: HERO (Slider + Sidebar) --- */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 lg:h-[650px]">
+      {/* The row is pinned to the section height; an auto row grows with the sidebar list and spills over the next section. */}
+      <section className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[minmax(0,1fr)] lg:h-[650px]">
         {/* Main Hero Slider */}
         <div className="lg:col-span-2 h-[500px] lg:h-full relative group overflow-hidden bg-stone-900">
            {heroArticles.map((article, index) => (
