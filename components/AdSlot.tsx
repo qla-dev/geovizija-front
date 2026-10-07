@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Google AdSense unit. The loader script is in index.html; auto ads are off,
 // so every ad on the site comes from one of these slots.
@@ -37,23 +37,37 @@ export const AdSlot: React.FC<{ variant?: AdVariant; placement?: AdPlacement; cl
   className = '',
 }) => {
   const ref = useRef<HTMLModElement>(null);
+  // The slot reserves its space (label + sized box) while the ad loads, so it is in the viewport for
+  // AdSense to request an ad. Only when AdSense answers "unfilled" (no ad for this view) does it collapse.
+  const [unfilled, setUnfilled] = useState(false);
 
-  // The slot always reserves its space (label + sized box), so it is visible and in the viewport
-  // for AdSense to request an ad, and the layout does not jump when one arrives.
   useEffect(() => {
+    const ins = ref.current;
+    if (!ins) return;
+    const check = () => setUnfilled(ins.getAttribute('data-ad-status') === 'unfilled');
+    const observer = new MutationObserver(check);
+    observer.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
+    check();
+
     // StrictMode runs effects twice; AdSense throws if a slot is filled twice.
-    if (!ref.current || ref.current.getAttribute('data-adsbygoogle-status')) return;
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch {
-      // Blocked by an ad blocker or not loaded yet - the placeholder stays empty.
+    if (!ins.getAttribute('data-adsbygoogle-status')) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch {
+        // Blocked by an ad blocker or not loaded yet - the placeholder stays empty.
+      }
     }
+    return () => observer.disconnect();
   }, []);
 
   const fluid = variant === 'inArticle';
 
   return (
-    <aside className={`w-full flex flex-col items-center ${className}`} aria-label="Oglas">
+    <aside
+      className={`w-full flex flex-col items-center ${unfilled ? 'hidden' : className}`}
+      aria-label="Oglas"
+      aria-hidden={unfilled}
+    >
       <span className="mb-1 text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">Oglas</span>
       <ins
         ref={ref}
