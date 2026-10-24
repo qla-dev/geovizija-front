@@ -46,7 +46,22 @@ export const api = {
     if (params.featured) query.set('featured', '1');
     if (params.search) query.set('search', params.search);
     query.set('per_page', String(params.perPage ?? 100));
-    return (await request<Article[]>(`/posts?${query}`)).data;
+
+    // Categories, search and article routes use this complete shared collection.
+    // perPage controls the API batch size, not the total number of articles.
+    const { data, meta } = await request<Article[]>(`/posts?${query}`);
+    if (!meta || meta.current_page >= meta.last_page) return data;
+
+    const remaining = await Promise.all(
+      Array.from({ length: meta.last_page - meta.current_page }, (_, index) => {
+        const pageQuery = new URLSearchParams(query);
+        pageQuery.set('page', String(meta.current_page + index + 1));
+        return request<Article[]>(`/posts?${pageQuery}`);
+      }),
+    );
+
+    // Promise.all preserves page order even when responses finish out of order.
+    return data.concat(...remaining.map(page => page.data));
   },
   post: async (idOrSlug: string): Promise<Article> => (await request<Article>(`/posts/${encodeURIComponent(idOrSlug)}`)).data,
   comments: async (postId: string): Promise<Comment[]> =>

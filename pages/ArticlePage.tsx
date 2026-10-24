@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
@@ -7,14 +7,40 @@ import { ShareBar } from '../components/ShareBar';
 import { AdSlot } from '../components/AdSlot';
 import { SEO } from '../components/SEO';
 import { Comments } from '../components/Comments';
+import { api, ApiError } from '../services/api';
+import { Article } from '../types';
+
+interface ArticleLookup {
+  slug: string;
+  status: 'loading' | 'ready' | 'not-found' | 'error';
+  article?: Article;
+}
 
 export const ArticlePage: React.FC = () => {
   const { articles: allArticles, categories: allCategories } = useContent();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [lookup, setLookup] = useState<ArticleLookup | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   // Old links use the numeric id; they are moved to the slug URL below.
-  const article = allArticles.find(a => a.slug === slug) ?? allArticles.find(a => a.id === slug);
+  const cachedArticle = allArticles.find(a => a.slug === slug) ?? allArticles.find(a => a.id === slug);
+  const currentLookup = lookup?.slug === slug ? lookup : null;
+  const article = cachedArticle ?? currentLookup?.article;
   const id = article?.id;
+
+  useEffect(() => {
+    if (!slug || cachedArticle) return;
+    let active = true;
+    setLookup({ slug, status: 'loading' });
+    // A list's contents cannot tell us whether a direct article URL exists.
+    api.post(slug).then(
+      article => { if (active) setLookup({ slug, status: 'ready', article }); },
+      error => {
+        if (active) setLookup({ slug, status: error instanceof ApiError && error.status === 404 ? 'not-found' : 'error' });
+      },
+    );
+    return () => { active = false; };
+  }, [slug, cachedArticle, retryCount]);
 
   useEffect(() => {
     if (article && article.slug !== slug) navigate(`/article/${article.slug}`, { replace: true });
@@ -34,6 +60,24 @@ export const ArticlePage: React.FC = () => {
     .sort((x, y) => x.key - y.key)
     .map(({ a }) => a)
     .slice(0, 6), [allArticles, id]);
+
+  if (!article && slug && currentLookup?.status !== 'not-found') {
+    if (currentLookup?.status === 'error') {
+      return (
+        <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4 p-8 text-center" role="alert">
+          <SEO title="Članak trenutno nije dostupan | Geovizija" />
+          <p className="text-stone-700">Članak trenutno nije moguće učitati. Pokušajte ponovo.</p>
+          <button onClick={() => setRetryCount(count => count + 1)} className="px-5 py-2 bg-geo-green text-white font-bold">Pokušaj ponovo</button>
+        </div>
+      );
+    }
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center" role="status" aria-label="Učitavanje članka">
+        <SEO title="Učitavanje članka | Geovizija" />
+        <div className="w-10 h-10 border-4 border-stone-300 border-t-geo-green rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!article) {
     return (

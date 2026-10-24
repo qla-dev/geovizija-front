@@ -70,7 +70,6 @@ if (preg_match('/^[a-z0-9-]{1,191}$/', $slug)) {
                 'og:image:height' => $post['imageHeight'] ?? null,
                 'article:published_time' => $post['publishedAt'] ?? null,
                 'article:section' => $post['category']['name'] ?? null,
-                'article:author' => $post['author'] ?? null,
             ]),
         ];
     } elseif ($type === 'category' && ($category = $fetch('/categories/'.$slug))) {
@@ -109,6 +108,11 @@ $tags = [
     '<meta name="twitter:description" content="'.$e($meta['description']).'" />',
     '<meta name="twitter:image" content="'.$e($image).'" />',
 ];
+if ($type === 'article') {
+    $tags[] = '<meta name="geovizija:post-id" content="'.$e($post['id']).'" />';
+    // article:author requires a profile URL; the author's display name belongs here.
+    $tags[] = '<meta name="author" content="'.$e($post['author'] ?? '').'" />';
+}
 foreach ($meta['extra'] as $property => $value) {
     $tags[] = '<meta property="'.$e($property).'" content="'.$e($value).'" />';
 }

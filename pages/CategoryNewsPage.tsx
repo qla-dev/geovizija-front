@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useContent } from '../components/ContentProvider';
 import { ArticleCard } from '../components/ArticleCard';
@@ -30,6 +30,8 @@ export const CategoryNewsPage: React.FC = () => {
     try { localStorage.setItem(VIEW_STORAGE_KEY, mode); } catch { /* storage unavailable */ }
   };
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => setCurrentPage(1), [categoryId]);
 
   // Find Category Info
   const category = allCategories.find(c => c.id === categoryId);
@@ -168,7 +170,7 @@ export const CategoryNewsPage: React.FC = () => {
 
          {/* Pagination */}
          {totalPages > 1 && (
-            <div className="mt-8 flex justify-center items-center gap-2">
+            <div className="mt-8 flex flex-wrap justify-center items-center gap-2">
                <button 
                  onClick={() => handlePageChange(currentPage - 1)}
                  disabled={currentPage === 1}

@@ -6,6 +6,10 @@ The API lives at `https://geovizija.com/endpoints/api/...` (`/categories`, `/pos
 
 All content comes from that API: `services/api.ts` is the client, `components/ContentProvider.tsx` loads categories and posts once, and pages read them with `useContent()`. There is no mock data at runtime.
 
+The shared post loader follows every API page. `ArticlePage` also fetches `/posts/{id or slug}` when an article is absent from the shared list; only an API 404 shows "not found", while temporary failures offer a retry.
+
+`index.html` declares `geovizija:article-loader=direct-api-v1` for the backend's sharing guard; keep it aligned with direct article lookup. `og.php` includes the exact `geovizija:post-id` in crawler previews. Deploy this frontend before a backend that requires these checks; the backend intentionally refuses to share with an older deployment.
+
 Backend switch (`VITE_API_BACKEND`, set in `.env.local`, see `.env.example`):
 
 - `production` (default) — `https://geovizija.com/endpoints/api`, also from a local `npm run dev`
