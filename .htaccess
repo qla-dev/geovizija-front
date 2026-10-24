@@ -10,13 +10,23 @@ DirectoryIndex dist/index.html
 # hashed assets in dist/assets stay cacheable.
 <IfModule mod_headers.c>
     <FilesMatch "\.(html|php)$">
-        Header set Cache-Control "private, no-cache"
+        Header set Cache-Control "private, no-store, no-cache, must-revalidate"
         Header append Vary "User-Agent"
     </FilesMatch>
 </IfModule>
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Facebook can open saved links over HTTP. Use one HTTPS origin before the app
+    # loads, including behind the host's TLS proxy; preserve paths, query and methods.
+    RewriteCond %{HTTP_HOST} ^(?:www\.)?geovizija\.com$ [NC]
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !^https$ [NC]
+    RewriteRule ^ https://geovizija.com%{REQUEST_URI} [R=308,L,NE]
+
+    RewriteCond %{HTTP_HOST} ^www\.geovizija\.com$ [NC]
+    RewriteRule ^ https://geovizija.com%{REQUEST_URI} [R=308,L,NE]
 
     # Keep the deployment endpoint outside the generated Vite build.
     RewriteRule ^redeploy\.php$ - [L]

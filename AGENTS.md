@@ -10,6 +10,8 @@ The shared post loader follows every API page. `ArticlePage` also fetches `/post
 
 `index.html` declares `geovizija:article-loader=direct-api-v1` for the backend's sharing guard; keep it aligned with direct article lookup. `og.php` includes the exact `geovizija:post-id` in crawler previews. Deploy this frontend before a backend that requires these checks; the backend intentionally refuses to share with an older deployment.
 
+Production HTTP and `www` requests redirect with 308 to `https://geovizija.com`, keeping the path and query string (including Facebook tracking). The HTTPS check also respects the host's `X-Forwarded-Proto` TLS proxy header to avoid loops. HTML responses use `no-store` so mobile in-app browsers do not retain an obsolete app entry page; hashed assets remain cacheable. Do not allow the app to run on the HTTP origin: the API intentionally permits the HTTPS origins only.
+
 Backend switch (`VITE_API_BACKEND`, set in `.env.local`, see `.env.example`):
 
 - `production` (default) — `https://geovizija.com/endpoints/api`, also from a local `npm run dev`

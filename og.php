@@ -21,7 +21,7 @@ if ($html === false) {
 
 header('Content-Type: text/html; charset=UTF-8');
 // Not for shared caches: the same URL serves different HTML to people (see .htaccess).
-header('Cache-Control: private, no-cache');
+header('Cache-Control: private, no-store, no-cache, must-revalidate');
 header('Vary: User-Agent');
 
 $fetch = function (string $path): ?array {
