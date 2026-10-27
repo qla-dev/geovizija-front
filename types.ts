@@ -24,6 +24,8 @@ export interface Article {
   content: string; // Full mock content
   categoryId: CategoryId;
   imageUrl: string;
+  imageCredit?: string | null; // photo credit shown under the cover
+  imageCredits?: Record<string, string>; // in-text image URL -> photo credit
   author: string;
   date: string;
   readTime: number;

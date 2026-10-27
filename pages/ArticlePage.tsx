@@ -150,6 +150,9 @@ export const ArticlePage: React.FC = () => {
            </div>
         </div>
       </div>
+      {article.imageCredit && (
+        <p className="max-w-7xl mx-auto px-4 sm:px-6 pt-2 text-right text-xs font-sans text-stone-500 leading-snug">{article.imageCredit}</p>
+      )}
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-8 md:pt-8 md:pb-12">
@@ -196,6 +199,9 @@ export const ArticlePage: React.FC = () => {
                         <img src={image[2]} alt={image[1]} loading="lazy" className="w-full aspect-video object-cover bg-stone-200" />
                         {/* Captions temporarily hidden (not relevant enough); remove `false &&` to restore. */}
                         {false && image[1] && <figcaption className="px-4 sm:px-0 mt-2 text-sm font-sans text-stone-500 leading-snug">{image[1]}</figcaption>}
+                        {article.imageCredits?.[image[2]] && (
+                          <figcaption className="px-4 sm:px-0 mt-2 text-right text-xs font-sans text-stone-500 leading-snug">{article.imageCredits[image[2]]}</figcaption>
+                        )}
                       </figure>
                     );
                   }
