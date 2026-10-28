@@ -4,7 +4,6 @@ import { setQuizProgress } from '../services/quizProgress';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, X, Trophy, RotateCcw, Share2 } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import { AdSlot } from '../components/AdSlot';
 import { api } from '../services/api';
 import { Quiz } from '../types';
 import { formatQuizDate, getQuizResult, QuizResult, saveQuizResult } from '../services/quizResults';
@@ -237,9 +236,6 @@ export const QuizPlayPage: React.FC = () => {
             </button>
           ))}
         </div>
-
-        {/* Ad below the answers */}
-        <AdSlot placement="quiz" className="mt-8" />
 
         {answered && (
           <div className="mt-6">

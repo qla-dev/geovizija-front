@@ -4,7 +4,6 @@ import { useContent } from '../components/ContentProvider';
 import { CategoryPill } from '../components/CategoryPill';
 import { Clock, ArrowLeft, ArrowRightLeft, MousePointerClick } from 'lucide-react';
 import { ShareBar } from '../components/ShareBar';
-import { AdSlot } from '../components/AdSlot';
 import { SEO } from '../components/SEO';
 import { Comments } from '../components/Comments';
 import { api, ApiError } from '../services/api';
@@ -187,7 +186,6 @@ export const ArticlePage: React.FC = () => {
               {/* One block per line: "## " subheading, "![caption](url)" image, otherwise a paragraph.
                   An ad slot follows the third paragraph. */}
               {(() => {
-                let paragraphs = 0;
                 return article.content.split(/\n+/).map(line => line.trim()).filter(Boolean).map((block, index) => {
                   if (block.startsWith('## ')) {
                     return <h2 key={index} className="text-2xl md:text-3xl font-bold text-stone-900 mt-10 mb-4">{block.slice(3)}</h2>;
@@ -205,20 +203,12 @@ export const ArticlePage: React.FC = () => {
                       </figure>
                     );
                   }
-                  paragraphs++;
-                  return (
-                    <React.Fragment key={index}>
-                      <p className="mb-6 leading-loose">{block}</p>
-                      {paragraphs === 3 && <AdSlot variant="inArticle" placement="article" className="my-8 not-prose" />}
-                    </React.Fragment>
-                  );
+                  return <p key={index} className="mb-6 leading-loose">{block}</p>;
                 });
               })()}
             </div>
 
             <ShareBar title={article.title} />
-
-            <AdSlot placement="bottom" className="mt-8" />
 
             <Comments postId={article.id} />
 
@@ -293,8 +283,6 @@ export const ArticlePage: React.FC = () => {
                     ))}
                  </div>
                </div>
-
-               <AdSlot variant="rectangle" placement="sidebar" />
 
             </div>
           </div>

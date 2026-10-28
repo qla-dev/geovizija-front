@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from './Header';
 import { BottomNav } from './BottomNav';
 import { Footer } from './Footer';
+import { QuizButton } from './QuizButton';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <Footer />
       <BottomNav />
+      <QuizButton />
     </div>
   );
 };

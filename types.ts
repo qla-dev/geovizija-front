@@ -6,7 +6,8 @@ export enum CategoryId {
   KULTURA = 'kultura',
   ZANIMLJIVOSTI = 'zanimljivosti',
   TEHNOLOGIJA = 'tehnologija',
-  SKOLSTVO = 'skolstvo'
+  SKOLSTVO = 'skolstvo',
+  ZDRAVLJE = 'zdravlje'
 }
 
 export interface Category {

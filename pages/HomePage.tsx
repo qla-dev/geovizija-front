@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Camera, Zap, Globe, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CategoryPill } from '../components/CategoryPill';
 import { SEO, SITE_DESCRIPTION, SITE_TAGLINE } from '../components/SEO';
-import { AdSlot } from '../components/AdSlot';
 
 export const HomePage: React.FC = () => {
   const { articles: allArticles, categories: allCategories } = useContent();
@@ -170,8 +169,6 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
-
       {/* --- NEW SECTION: MORE FROM GEOVIZIJA (SLIDER) --- */}
       <section className="bg-stone-950 text-white py-8 md:py-12 border-t border-stone-900 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -281,8 +278,6 @@ export const HomePage: React.FC = () => {
          </div>
       </section>
       )}
-
-      <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
 
       {/* --- SECTION 3: TECHNOLOGY SPOTLIGHT (White BG) --- */}
       <section className="py-8 md:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -440,8 +435,6 @@ export const HomePage: React.FC = () => {
 
          </div>
       </div>
-
-      <AdSlot className="bg-stone-100 px-4 py-8 md:py-12" />
 
       {/* --- NEW SECTION: PUTOVANJA (TRAVEL) --- */}
       <section className="relative bg-stone-950 text-white overflow-hidden py-8 md:py-12">
