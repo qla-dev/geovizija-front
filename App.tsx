@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { ContentProvider } from './components/ContentProvider';
@@ -14,12 +14,17 @@ import { PrivacyPage } from './pages/PrivacyPage';
 const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
 import { API_BASE_URL } from './services/api';
 
-// Scroll to top component that listens to location changes
+// Every new page opens at the top. Runs before paint and again on the next frame, so a
+// still-running touch fling on mobile (e.g. tapping a category in the list) cannot override it.
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  
-  useEffect(() => {
-    window.scrollTo(0, 0);
+
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const toTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    toTop();
+    const frame = requestAnimationFrame(toTop);
+    return () => cancelAnimationFrame(frame);
   }, [pathname]);
 
   return null;
